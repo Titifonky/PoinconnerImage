@@ -20,7 +20,9 @@ namespace PoinconnerImage
 
         private void Formulaire_Load(object sender, EventArgs e)
         {
-            TypeCarroyage.SetSelected(0, true); 
+            TypeCarroyage.SetSelected(0, true);
+            Lancer.Enabled = false;
+            Jeu.Text = "2";
         }
 
         private void Formulaire_FormClosing(object sender, FormClosingEventArgs e)
@@ -30,7 +32,7 @@ namespace PoinconnerImage
             Data = null;
             this.Dispose(true);
         }
-        
+
         private void ChercherImage_Click(object sender, EventArgs e)
         {
             if (OuvrirFichierImage.ShowDialog() == DialogResult.OK)
@@ -44,7 +46,7 @@ namespace PoinconnerImage
             if (File.Exists(CheminImage.Text))
             {
                 pImage = new Bitmap(CheminImage.Text);
-                VignetteImage.Image = (Image) pImage;
+                VignetteImage.Image = (Image)pImage;
             }
 
             Valider();
@@ -73,6 +75,17 @@ namespace PoinconnerImage
         {
             if (!ContientQueDesChiffres(ListePoincons.Text))
                 ListePoincons.Text = "";
+
+            Valider();
+        }
+
+        private void Jeu_TextChanged(object sender, EventArgs e)
+        {
+            Double Nb;
+            if (!Double.TryParse(Jeu.Text, out Nb))
+            {
+                Jeu.Text = "";
+            }
 
             Valider();
         }
@@ -122,7 +135,9 @@ namespace PoinconnerImage
                 String.IsNullOrEmpty(CheminImage.Text) ||
                 String.IsNullOrEmpty(CheminDossier.Text) ||
                 String.IsNullOrEmpty(ListePoincons.Text) ||
-                String.IsNullOrEmpty(LargeurImage.Text)
+                String.IsNullOrEmpty(Jeu.Text) ||
+                String.IsNullOrEmpty(LargeurImage.Text) ||
+                String.IsNullOrEmpty(HauteurImage.Text)
                 )
                 T = false;
 
@@ -132,9 +147,10 @@ namespace PoinconnerImage
         private void Lancer_Click(object sender, EventArgs e)
         {
             Lancer.Enabled = false;
-
+            Data.Clear();
             Data.Add("CheminFichierImage", CheminImage.Text);
             Data.Add("CheminDossierExport", CheminDossier.Text);
+            Data.Add("Jeu", Jeu.Text);
             Data.Add("ListePoincons", ListePoincons.Text);
             Data.Add("LargeurImage", LargeurImage.Text);
             Data.Add("HauteurImage", HauteurImage.Text);
