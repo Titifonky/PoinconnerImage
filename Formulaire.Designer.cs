@@ -190,7 +190,7 @@
             this.TypeCarroyage.ItemHeight = 20;
             this.TypeCarroyage.Items.AddRange(new object[] {
             "Carré",
-            "Hexagonale"});
+            "Hexagonal"});
             this.TypeCarroyage.Location = new System.Drawing.Point(632, 476);
             this.TypeCarroyage.Name = "TypeCarroyage";
             this.TypeCarroyage.Size = new System.Drawing.Size(120, 44);

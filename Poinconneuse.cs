@@ -13,6 +13,8 @@ namespace PoinconnerImage
     {
         public Double X;
         public Double Y;
+        public void Deplacer(Vecteur Vec)
+        { X = Vec.X + X; Y = Vec.Y + Y; }
     }
 
     public struct Point
@@ -42,8 +44,10 @@ namespace PoinconnerImage
         private Bitmap _ImageSource;
         private BitmapData _ImageSourceData;
         private Boolean _Optimiser;
-        private Double _CoteMm;
-        private Int32 _CotePxl;
+        private Double _CoteHMm;
+        private Int32 _CoteHPxl;
+        private Double _CoteVMm;
+        private Int32 _CoteVPxl;
         private Double _PixelParMm;
         private Double _MmParPixel;
         private Int32 _NbRecX;
@@ -51,7 +55,7 @@ namespace PoinconnerImage
         private Double _DecalX;
         private Double _DecalY;
         private List<Rec> _ListeTrous;
-        ///private List<Vecteur> _ListeVecPixel;
+        private List<Vecteur> _ListeVecPixel;
 
         public Poinconneuse()
         {
@@ -80,16 +84,52 @@ namespace PoinconnerImage
             _ListePoincons.Sort();
             _ListePoincons.Reverse();
 
+
+            Int32 p = _ImageSource.Height;
             _MmParPixel = (Double)_Lg / (Double)_ImageSource.Width;
             _PixelParMm = (Double)_ImageSource.Width / (Double)_Lg;
-            _CoteMm = _ListePoincons[0] + _Jeu;
-            _CotePxl = (Int32)(_CoteMm * _PixelParMm);
-            _NbRecX = (Int32)(_Lg / _CoteMm);
-            _NbRecY = (Int32)(_Ht / _CoteMm);
-            _DecalX = (_Lg - (_NbRecX * _CoteMm)) * 0.5;
-            _DecalY = (_Ht - (_NbRecY * _CoteMm)) * 0.5;
+            _CoteHMm = _ListePoincons[0] + _Jeu;
+            _CoteHPxl = (Int32)(_CoteHMm * _PixelParMm);
+            _CoteVMm = _CoteHMm;
+            _CoteVPxl = _CoteHPxl;
+            _NbRecX = (Int32)(_Lg / _CoteHMm);
+            _NbRecY = (Int32)(_Ht / _CoteHMm);
+            _DecalX = (_Lg - (_NbRecX * _CoteHMm)) * 0.5;
+            _DecalY = (_Ht - (_NbRecY * _CoteHMm)) * 0.5;
 
             _ListeTrous = new List<Rec>();
+            _ListeVecPixel = new List<Vecteur>();
+
+            // On rempli la liste des pixels pour chaque trou
+            Vecteur Decalage;
+            Decalage.X = -0.5 * _CoteHMm;
+            Decalage.Y = -0.5 * _CoteHMm;
+
+            if (_TypeCarroyage == "Hexagonal")
+            {
+                _CoteVMm = (_CoteHMm * 0.5) / Math.Tan(Math.PI / 6);
+                _CoteVPxl = (Int32)(_CoteVMm * _PixelParMm);
+            }
+
+            
+
+            for (Int32 y = 0; y <= _CoteVPxl + 1; y++) for (Int32 x = 0; x <= _CoteHPxl + 1; x++)
+                {
+                    Vecteur Vec = new Vecteur();
+                    Vec.X = x * _MmParPixel; Vec.Y = y * _MmParPixel;
+                    Vec.Deplacer(Decalage);
+                    if (_TypeCarroyage == "Carré")
+                    {
+                        _ListeVecPixel.Add(Vec);
+                    }
+                    else if (_TypeCarroyage == "Hexagonal")
+                    {
+
+                    }
+                    
+                }
+
+            
 
 
             ConvertirEnDxf();
@@ -108,41 +148,38 @@ namespace PoinconnerImage
                         );
             }
 
-            for (Int32 y = 1; y <= _NbRecY; y++)
+            for (Int32 y = 0; y < _NbRecY; y++)
             {
-                Double pDecalY = _DecalY + (y - 0.5) * _CoteMm;
-                Int32 PxlDepY = (Int32)(_PixelParMm * (_DecalY + (y - 1) * _CoteMm));
 
-                for (Int32 x = 1; x <= _NbRecX; x++)
+                Double pDecalY = _DecalY + ((y + 0.5) * _CoteHMm);
+
+                for (Int32 x = 0; x < _NbRecX; x++)
                 {
+
                     Rec pRec = new Rec();
                     Point PtCentre;
-                    PtCentre.X = _DecalX + (x - 0.5) * _CoteMm;
+                    PtCentre.X = _DecalX + ((x + 0.5) * _CoteHMm);
                     PtCentre.Y = pDecalY;
-                    pRec.Point = PtCentre;                
+                    pRec.Point = PtCentre;
 
                     float pLuminosite = 0;
 
-                    for (Int32 j = 0; j <= _CotePxl; j++)
+                    foreach (Vecteur Vec in _ListeVecPixel)
                     {
-                        PxlDepY += j;
-                        Int32 PxlDepX = (Int32)(_PixelParMm * (_DecalX + (x - 1) * _CoteMm));
+                        Point PtPixel;
+                        PtPixel = PtCentre;
+                        PtPixel.Deplacer(Vec);
 
-                        for (Int32 i = 0; i <= _CotePxl; i++)
-                        {
-                            PxlDepX += i;
-                            Color P;
-                            if (_Optimiser)
-                                P = GetPixel(PxlDepX, PxlDepY);
-                            else
-                                P = _ImageSource.GetPixel(PxlDepX, PxlDepY);
+                        Color P;
+                        if (_Optimiser)
+                            P = GetPixel((int)Math.Round(PtPixel.X * _PixelParMm, 0), (int)Math.Round(PtPixel.Y * _PixelParMm, 0));
+                        else
+                            P = _ImageSource.GetPixel((int)Math.Round(PtPixel.X * _PixelParMm, 0), (int)Math.Round(PtPixel.Y * _PixelParMm, 0));
 
-                            pLuminosite += P.GetBrightness();
-
-                        }
+                        pLuminosite += P.GetBrightness();
                     }
 
-                    pRec.Luminosite = pLuminosite / ((float)(_CotePxl * _CotePxl));
+                    pRec.Luminosite = pLuminosite / ((float)(_CoteHPxl * _CoteHPxl));
                     _ListeTrous.Add(pRec);
                 }
             }
@@ -160,8 +197,7 @@ namespace PoinconnerImage
 
              foreach (Rec pRect in _ListeTrous)
              {
-                 Debug.WriteLine(pRect.Point.X.ToString() + " / " + pRect.Point.Y.ToString() + "   -   " + pRect.Luminosite.ToString());
-                 DXFLibrary.Circle Cercle = new DXFLibrary.Circle(pRect.Point.X, pRect.Point.Y, pRect.Luminosite * 10, "Poinçonnage");
+                 DXFLibrary.Circle Cercle = new DXFLibrary.Circle(pRect.Point.X, pRect.Point.Y * -1, pRect.Luminosite * _ListePoincons[0], "Poinçonnage");
                  DocDXF.add(Cercle);
              }
 
