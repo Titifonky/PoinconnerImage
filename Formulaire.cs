@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace PoinconnerImage
 {
@@ -12,6 +13,8 @@ namespace PoinconnerImage
         private Bitmap pImage;
         private Poinconneuse Poinconner = new Poinconneuse();
         private NameValueCollection Data = new NameValueCollection();
+        private Separateurs _Sep;
+        private Histogramme _Histogramme;
 
         public Formulaire()
         {
@@ -23,6 +26,7 @@ namespace PoinconnerImage
             TypeCarroyage.SetSelected(0, true);
             Lancer.Enabled = false;
             Jeu.Text = "2";
+            _Sep = new Separateurs(BoxHistogram, 1);
         }
 
         private void Formulaire_FormClosing(object sender, FormClosingEventArgs e)
@@ -46,7 +50,12 @@ namespace PoinconnerImage
             if (File.Exists(CheminImage.Text))
             {
                 pImage = new Bitmap(CheminImage.Text);
-                VignetteImage.Image = (Image)pImage;
+
+                VignetteImage.Image = EditionImage.RedimensionnerImage(pImage, VignetteImage.Size);
+
+                _Histogramme = new Histogramme(BoxHistogram, VignetteImage.Image);
+
+                _Sep.Supprimer();
             }
 
             Valider();
@@ -77,6 +86,74 @@ namespace PoinconnerImage
                 ListePoincons.Text = "";
 
             Valider();
+        }
+
+
+        private void ValiderPoincon_Click(object sender, EventArgs e)
+        {
+            List<String> pListeDiams = new List<String>();
+            foreach (String S in ListePoincons.Text.Split(' '))
+            {
+                if (!String.IsNullOrEmpty(S))
+                    pListeDiams.Add(S);
+            }
+
+            List<Texte> pListeTexte = _Sep.ListeTextes;
+
+            for (int i = 0; i < Math.Min(pListeDiams.Count, pListeTexte.Count); i++)
+            {
+                pListeTexte[i].Nom = pListeDiams[i];
+            }
+
+            if (pListeDiams.Count > pListeTexte.Count)
+            {
+                Separateur SepG;
+
+                int Div;
+
+                if (pListeTexte.Count == 0)
+                    SepG = _Sep.AjouterSeparateur(0, 2);
+                else
+                    SepG = pListeTexte[pListeTexte.Count - 1].Droite;
+
+                if ((BoxHistogram.Width - SepG.X) < 10)
+                {
+                    Separateur SepTmp = pListeTexte[pListeTexte.Count - 1].Gauche;
+                    Div = (BoxHistogram.Width - 5 - SepTmp.X) / (1 + pListeDiams.Count - pListeTexte.Count);
+                    SepG.X = SepTmp.X + Div;
+                }
+                else
+                    Div = (BoxHistogram.Width - 5 - SepG.X) / (pListeDiams.Count - pListeTexte.Count);
+
+                for (int i = pListeTexte.Count; i < pListeDiams.Count; i++)
+                {
+                    Separateur SepD = _Sep.AjouterSeparateur(SepG.No + 1, SepG.X + Div);
+                    _Sep.AjouterTexte(pListeDiams[i], SepG, SepD);
+                    SepG = SepD;
+                }
+            }
+            else if (pListeDiams.Count < pListeTexte.Count)
+            {
+                if (pListeDiams.Count == 0)
+                    _Sep.Supprimer();
+                else
+                    for (int i = (pListeTexte.Count - 1); i >= pListeDiams.Count; i--)
+                    {
+                        Texte Txt = pListeTexte[i];
+                        _Sep.SupprimerSeparateur(Txt.Droite);
+                        _Sep.SupprimerTexte(Txt);
+                    }
+            }
+
+        }
+
+        private void VisualiserZones_Click(object sender, EventArgs e)
+        {
+
+            if (_Sep.ListeTextes.Count > 0)
+            {
+            }
+
         }
 
         private void Jeu_TextChanged(object sender, EventArgs e)
@@ -176,5 +253,6 @@ namespace PoinconnerImage
 
             return Test;
         }
+
     }
 }
