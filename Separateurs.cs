@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SD = System.Drawing;
-
-namespace PoinconnerImage
+namespace NsSeparateurs
 {
     public class Poincon
     {
         public Double Diametre { get { return _Diametre; } }
-        public float Min { get { return _Min; } }
-        public float Max { get { return _Max; } }
+        public Double Min { get { return _Min; } }
+        public Double Max { get { return _Max; } }
 
         private Double _Diametre;
-        private float _Min;
-        private float _Max;
+        private Double _Min;
+        private Double _Max;
 
-        public Poincon(Double Diametre, float Min, float Max)
+        public Poincon(Double Diametre, Double Min, Double Max)
         {
             _Diametre = Diametre;
             _Min = Min;
@@ -31,16 +28,11 @@ namespace PoinconnerImage
         private Pen _Pen = Pens.Red;
         private PictureBox _Box;
         private int Tolerance = 2;
+        private Double _Echelle = 1;
         private List<Separateur> _ListeSeps = new List<Separateur>();
         private List<Texte> _ListeTextes = new List<Texte>();
         private Graphics _Graphique;
         private List<Poincon> _ListePoincons = new List<Poincon>();
-
-        public List<Texte> ListeTextes
-        {
-            get { return _ListeTextes; }
-            set { _ListeTextes = value; }
-        }
 
         public Separateurs(PictureBox Box, Double Echelle)
         {
@@ -48,6 +40,57 @@ namespace PoinconnerImage
             {
                 _Box = Box;
                 _Graphique = _Box.CreateGraphics();
+                _Echelle = Echelle;
+            }
+        }
+
+        public void Diametres(List<String> ListePoincons)
+        {
+            List<Texte> pListeTexte = _ListeTextes;
+
+            for (int i = 0; i < Math.Min(ListePoincons.Count, pListeTexte.Count); i++)
+            {
+                pListeTexte[i].Nom = ListePoincons[i];
+            }
+
+            if (ListePoincons.Count > pListeTexte.Count)
+            {
+                Separateur pSepG;
+
+                int pDiv;
+
+                if (pListeTexte.Count == 0)
+                    pSepG = AjouterSeparateur(0, 2);
+                else
+                    pSepG = pListeTexte[pListeTexte.Count - 1].Droite;
+
+                if ((_Box.Width - pSepG.X) < 10)
+                {
+                    Separateur pSepTmp = pListeTexte[pListeTexte.Count - 1].Gauche;
+                    pDiv = (_Box.Width - 5 - pSepTmp.X) / (1 + ListePoincons.Count - pListeTexte.Count);
+                    pSepG.X = pSepTmp.X + pDiv;
+                }
+                else
+                    pDiv = (_Box.Width - 5 - pSepG.X) / (ListePoincons.Count - pListeTexte.Count);
+
+                for (int i = pListeTexte.Count; i < ListePoincons.Count; i++)
+                {
+                    Separateur pSepD = AjouterSeparateur(pSepG.No + 1, pSepG.X + pDiv);
+                    AjouterTexte(ListePoincons[i], pSepG, pSepD);
+                    pSepG = pSepD;
+                }
+            }
+            else if (ListePoincons.Count < pListeTexte.Count)
+            {
+                if (ListePoincons.Count == 0)
+                    Supprimer();
+                else
+                    for (int i = (pListeTexte.Count - 1); i >= ListePoincons.Count; i--)
+                    {
+                        Texte pTxt = pListeTexte[i];
+                        SupprimerSeparateur(pTxt.Droite);
+                        SupprimerTexte(pTxt);
+                    }
             }
         }
 
@@ -69,7 +112,7 @@ namespace PoinconnerImage
 
         }
 
-        public Separateur AjouterSeparateur(int No, int X)
+        private Separateur AjouterSeparateur(int No, int X)
         {
             if (X > _Box.Width || X < 0)
                 return null;
@@ -85,7 +128,7 @@ namespace PoinconnerImage
             return null;
         }
 
-        public void SupprimerSeparateur(Separateur Sep)
+        private void SupprimerSeparateur(Separateur Sep)
         {
             _ListeSeps.Remove(Sep);
             Sep.Supprimer();
@@ -93,7 +136,7 @@ namespace PoinconnerImage
             _Box.Refresh();
         }
 
-        public Texte AjouterTexte(String Nom, Separateur Gauche, Separateur Droite)
+        private Texte AjouterTexte(String Nom, Separateur Gauche, Separateur Droite)
         {
             if ((!String.IsNullOrEmpty(Nom)) || (Gauche != null) || (Droite != null))
             {
@@ -108,12 +151,24 @@ namespace PoinconnerImage
             return null;
         }
 
-        public void SupprimerTexte(Texte Txt)
+        private void SupprimerTexte(Texte Txt)
         {
             _ListeTextes.Remove(Txt);
             Txt.Supprimer();
             Txt = null;
             _Box.Refresh();
+        }
+
+        public List<Poincon> Poincons()
+        {
+            List<Poincon> pListePoincons = new List<Poincon>();
+            foreach(Texte pTxt in _ListeTextes)
+            {
+                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), pTxt.Gauche.X * _Echelle / _Box.Width, pTxt.Droite.X * _Echelle / _Box.Width);
+                pListePoincons.Add(pPc);
+            }
+
+            return pListePoincons;
         }
 
     }
@@ -143,8 +198,8 @@ namespace PoinconnerImage
         private int _No;
         private Pen _Pen;
         private int _X;
-        private SD.Point _Depart = new SD.Point();
-        private SD.Point _Fin = new SD.Point();
+        private Point _Depart = new Point();
+        private Point _Fin = new Point();
         private Graphics _Graphique;
         private PictureBox _Box;
         private int _min = 0;
@@ -168,8 +223,8 @@ namespace PoinconnerImage
                 _Graphique = Graphique;
                 _Box = Box;
                 _ListeSep = ListeSep;
-                _Depart = new SD.Point(X, 0);
-                _Fin = new SD.Point(X, Box.Height);
+                _Depart = new Point(X, 0);
+                _Fin = new Point(X, Box.Height);
                 _EvPaint = new PaintEventHandler(Box_Paint);
                 _EvMsDown = new MouseEventHandler(Box_MouseDown);
                 _EvMsMove = new MouseEventHandler(Box_MouseMove);
@@ -199,7 +254,7 @@ namespace PoinconnerImage
             _Graphique = null;
         }
 
-        public bool IsPointOnLine(SD.Point Pt)
+        public bool IsPointOnLine(Point Pt)
         {
             if (Math.Abs(this.X - Pt.X) <= Tolerance)
                 return true;
@@ -233,6 +288,8 @@ namespace PoinconnerImage
                         }
                     }
                 }
+                _min += 3;
+                _max -= 2;
             }
         }
 

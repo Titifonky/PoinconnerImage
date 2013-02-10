@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Diagnostics;
-using System.Collections.Generic;
-using DXFLibrary;
 using System.IO;
+using DXFLibrary;
 
 namespace PoinconnerImage
 {
@@ -14,7 +13,7 @@ namespace PoinconnerImage
         public Double X;
         public Double Y;
         public void Deplacer(Vecteur Vec)
-        { X = Vec.X + X; Y = Vec.Y + Y; }
+        { X += Vec.X; Y += Vec.Y; }
     }
 
     public struct Point
@@ -22,7 +21,7 @@ namespace PoinconnerImage
         public Double X;
         public Double Y;
         public void Deplacer(Vecteur Vec)
-        { X = Vec.X + X; Y = Vec.Y + Y; }
+        { X += Vec.X; Y += Vec.Y; }
     }
 
     public struct Rec

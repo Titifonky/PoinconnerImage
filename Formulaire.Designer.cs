@@ -64,7 +64,7 @@
             this.VignetteImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.VignetteImage.Location = new System.Drawing.Point(12, 12);
             this.VignetteImage.Name = "VignetteImage";
-            this.VignetteImage.Size = new System.Drawing.Size(550, 614);
+            this.VignetteImage.Size = new System.Drawing.Size(550, 713);
             this.VignetteImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.VignetteImage.TabIndex = 0;
             this.VignetteImage.TabStop = false;
@@ -151,7 +151,7 @@
             // Lancer
             // 
             this.Lancer.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Lancer.Location = new System.Drawing.Point(758, 583);
+            this.Lancer.Location = new System.Drawing.Point(837, 682);
             this.Lancer.Name = "Lancer";
             this.Lancer.Size = new System.Drawing.Size(262, 43);
             this.Lancer.TabIndex = 13;
@@ -163,7 +163,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(633, 433);
+            this.label6.Location = new System.Drawing.Point(633, 507);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(167, 20);
             this.label6.TabIndex = 14;
@@ -171,7 +171,7 @@
             // 
             // LargeurImage
             // 
-            this.LargeurImage.Location = new System.Drawing.Point(806, 435);
+            this.LargeurImage.Location = new System.Drawing.Point(806, 507);
             this.LargeurImage.Name = "LargeurImage";
             this.LargeurImage.Size = new System.Drawing.Size(138, 20);
             this.LargeurImage.TabIndex = 15;
@@ -182,7 +182,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(1051, 414);
+            this.label7.Location = new System.Drawing.Point(1059, 484);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(166, 20);
             this.label7.TabIndex = 16;
@@ -196,7 +196,7 @@
             this.TypeCarroyage.Items.AddRange(new object[] {
             "Carré",
             "Hexagonal"});
-            this.TypeCarroyage.Location = new System.Drawing.Point(1055, 437);
+            this.TypeCarroyage.Location = new System.Drawing.Point(1063, 507);
             this.TypeCarroyage.Name = "TypeCarroyage";
             this.TypeCarroyage.Size = new System.Drawing.Size(120, 44);
             this.TypeCarroyage.TabIndex = 17;
@@ -206,7 +206,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(630, 461);
+            this.label1.Location = new System.Drawing.Point(633, 529);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(170, 20);
             this.label1.TabIndex = 18;
@@ -214,7 +214,7 @@
             // 
             // HauteurImage
             // 
-            this.HauteurImage.Location = new System.Drawing.Point(806, 461);
+            this.HauteurImage.Location = new System.Drawing.Point(809, 529);
             this.HauteurImage.Name = "HauteurImage";
             this.HauteurImage.Size = new System.Drawing.Size(134, 20);
             this.HauteurImage.TabIndex = 19;
@@ -223,7 +223,7 @@
             // 
             // Jeu
             // 
-            this.Jeu.Location = new System.Drawing.Point(891, 409);
+            this.Jeu.Location = new System.Drawing.Point(891, 485);
             this.Jeu.Name = "Jeu";
             this.Jeu.Size = new System.Drawing.Size(53, 20);
             this.Jeu.TabIndex = 21;
@@ -234,7 +234,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(633, 409);
+            this.label2.Location = new System.Drawing.Point(633, 484);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(252, 20);
             this.label2.TabIndex = 20;
@@ -244,7 +244,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(950, 412);
+            this.label8.Location = new System.Drawing.Point(950, 488);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(23, 13);
             this.label8.TabIndex = 22;
@@ -254,7 +254,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(950, 438);
+            this.label9.Location = new System.Drawing.Point(950, 510);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(23, 13);
             this.label9.TabIndex = 23;
@@ -264,7 +264,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(946, 464);
+            this.label10.Location = new System.Drawing.Point(949, 532);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(23, 13);
             this.label10.TabIndex = 24;
@@ -273,9 +273,9 @@
             // BoxHistogram
             // 
             this.BoxHistogram.BackColor = System.Drawing.Color.White;
-            this.BoxHistogram.Location = new System.Drawing.Point(637, 269);
+            this.BoxHistogram.Location = new System.Drawing.Point(637, 270);
             this.BoxHistogram.Name = "BoxHistogram";
-            this.BoxHistogram.Size = new System.Drawing.Size(537, 125);
+            this.BoxHistogram.Size = new System.Drawing.Size(627, 166);
             this.BoxHistogram.TabIndex = 25;
             this.BoxHistogram.TabStop = false;
             // 
@@ -291,17 +291,17 @@
             // 
             // VisualiserZones
             // 
-            this.VisualiserZones.Location = new System.Drawing.Point(637, 519);
+            this.VisualiserZones.Location = new System.Drawing.Point(637, 589);
             this.VisualiserZones.Name = "VisualiserZones";
             this.VisualiserZones.Size = new System.Drawing.Size(193, 23);
             this.VisualiserZones.TabIndex = 27;
-            this.VisualiserZones.Text = "Visualiser les zones dans l\'aperçu";
+            this.VisualiserZones.Text = "Visualiser les poinçons dans l\'aperçu";
             this.VisualiserZones.UseVisualStyleBackColor = true;
             this.VisualiserZones.Click += new System.EventHandler(this.VisualiserZones_Click);
             // 
             // Reinitialiser
             // 
-            this.Reinitialiser.Location = new System.Drawing.Point(852, 519);
+            this.Reinitialiser.Location = new System.Drawing.Point(852, 589);
             this.Reinitialiser.Name = "Reinitialiser";
             this.Reinitialiser.Size = new System.Drawing.Size(121, 23);
             this.Reinitialiser.TabIndex = 28;
@@ -312,7 +312,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1276, 638);
+            this.ClientSize = new System.Drawing.Size(1276, 737);
             this.Controls.Add(this.Reinitialiser);
             this.Controls.Add(this.VisualiserZones);
             this.Controls.Add(this.ValiderPoincon);

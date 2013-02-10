@@ -49,8 +49,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditionImage.cs" />
-    <Compile Include="Histogramme.cs" />
+    <Compile Include="Reseau.cs" />
+    <Compile Include="EditerImage.cs" />
     <Compile Include="Poinconneuse.cs" />
     <Compile Include="Formulaire.cs">
       <SubType>Form</SubType>
@@ -60,7 +60,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Separateur.cs" />
+    <Compile Include="Separateurs.cs" />
     <EmbeddedResource Include="Formulaire.resx">
       <DependentUpon>Formulaire.cs</DependentUpon>
     </EmbeddedResource>
