@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using NsSeparateurs;
 using NsEditerImage;
+using System.Diagnostics;
 
 namespace PoinconnerImage
 {
@@ -108,7 +109,60 @@ namespace PoinconnerImage
 
         private void VisualiserZones_Click(object sender, EventArgs e)
         {
+            VignetteImage.Refresh();
 
+            Double DiamMax = 0;
+            foreach (String S in ListePoincons.Text.Split(' '))
+            {
+                if ((!String.IsNullOrEmpty(S)) && (Convert.ToDouble(S) > DiamMax))
+                {
+                    DiamMax = Convert.ToDouble(S);
+                }
+
+            }
+
+            int pLgImage = Convert.ToInt32(LargeurImage.Text);
+            int pHtImage = Convert.ToInt32(HauteurImage.Text);
+            int pLgBmp = VignetteImage.Image.Size.Width;
+            int pHtBmp = VignetteImage.Image.Size.Height;
+            int pDecalX = Convert.ToInt32((VignetteImage.Width - pLgBmp) * 0.5);
+            int pDecalY = Convert.ToInt32((VignetteImage.Height - pHtBmp) * 0.5);
+
+            TypeReseau_e TypeReseau = TypeReseau_e.Carre;
+
+            switch ((String)TypeCarroyage.SelectedItem)
+            {
+                case "Carré":
+                    TypeReseau = TypeReseau_e.Carre;
+                    break;
+                case "Hexagonal":
+                    TypeReseau = TypeReseau_e.Hexagonal;
+                    break;
+            }
+
+
+            Size pDimTole = new System.Drawing.Size(pLgImage, pHtImage);
+            List<Point> pListePointsReseau = Reseau.ListePointsReseau(pDimTole, DiamMax, TypeReseau);
+            List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, pLgImage / Convert.ToDouble(pLgBmp), TypeReseau);
+
+            Graphics pGraph = VignetteImage.CreateGraphics();
+
+            foreach (Point Pt in pListePointsReseau)
+            {
+
+                int pX = Convert.ToInt32(pDecalX + Pt.X * pLgBmp / pLgImage);
+                int pY = Convert.ToInt32(pDecalY + Pt.Y * pHtBmp / pHtImage);
+
+                pGraph.FillRectangle(Brushes.Black, pX, pY, 1, 1);
+            }
+
+            pGraph.Dispose();
+
+        }
+
+        private void Reinitialiser_Click(object sender, EventArgs e)
+        {
+            VignetteImage.Refresh();
         }
 
         private void Jeu_TextChanged(object sender, EventArgs e)

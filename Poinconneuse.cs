@@ -10,6 +10,16 @@ namespace PoinconnerImage
 {
     public struct Vecteur
     {
+        public Vecteur(Double X, Double Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
+        public Vecteur(Point Pt1, Point Pt2)
+        {
+            this.X = Pt2.X - Pt1.X;
+            this.Y = Pt2.Y - Pt1.Y;
+        }
         public Double X;
         public Double Y;
         public void Deplacer(Vecteur Vec)
@@ -18,6 +28,11 @@ namespace PoinconnerImage
 
     public struct Point
     {
+        public Point(Double X, Double Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
         public Double X;
         public Double Y;
         public void Deplacer(Vecteur Vec)

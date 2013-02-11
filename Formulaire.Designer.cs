@@ -307,6 +307,7 @@
             this.Reinitialiser.TabIndex = 28;
             this.Reinitialiser.Text = "Reinitialiser";
             this.Reinitialiser.UseVisualStyleBackColor = true;
+            this.Reinitialiser.Click += new System.EventHandler(this.Reinitialiser_Click);
             // 
             // Formulaire
             // 
