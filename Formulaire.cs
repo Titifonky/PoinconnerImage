@@ -114,19 +114,22 @@ namespace PoinconnerImage
             Double DiamMax = 0;
             foreach (String S in ListePoincons.Text.Split(' '))
             {
-                if ((!String.IsNullOrEmpty(S)) && (Convert.ToDouble(S) > DiamMax))
+                if (!String.IsNullOrEmpty(S))
                 {
-                    DiamMax = Convert.ToDouble(S);
+                    if (Convert.ToDouble(S) > DiamMax)
+                        DiamMax = Convert.ToDouble(S);
                 }
 
             }
+
+            DiamMax += Convert.ToDouble(Jeu.Text);
 
             int pLgImage = Convert.ToInt32(LargeurImage.Text);
             int pHtImage = Convert.ToInt32(HauteurImage.Text);
             int pLgBmp = VignetteImage.Image.Size.Width;
             int pHtBmp = VignetteImage.Image.Size.Height;
-            int pDecalX = Convert.ToInt32((VignetteImage.Width - pLgBmp) * 0.5);
-            int pDecalY = Convert.ToInt32((VignetteImage.Height - pHtBmp) * 0.5);
+            int pDecalX = (int)Math.Truncate((VignetteImage.Width - pLgBmp) * 0.5);
+            int pDecalY = (int)Math.Truncate((VignetteImage.Height - pHtBmp) * 0.5);
 
             TypeReseau_e TypeReseau = TypeReseau_e.Carre;
 
@@ -140,21 +143,49 @@ namespace PoinconnerImage
                     break;
             }
 
+            Double MmParPx = pLgImage / Convert.ToDouble(pLgBmp);
+            Double PxParMm = Convert.ToDouble(pLgBmp) / pLgImage;
 
             Size pDimTole = new System.Drawing.Size(pLgImage, pHtImage);
             List<Point> pListePointsReseau = Reseau.ListePointsReseau(pDimTole, DiamMax, TypeReseau);
-            List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, pLgImage / Convert.ToDouble(pLgBmp), TypeReseau);
+            List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
 
             Graphics pGraph = VignetteImage.CreateGraphics();
 
+            _Editeur.Verrouiller();
+
             foreach (Point Pt in pListePointsReseau)
             {
+                float Val = 0;
 
-                int pX = Convert.ToInt32(pDecalX + Pt.X * pLgBmp / pLgImage);
-                int pY = Convert.ToInt32(pDecalY + Pt.Y * pHtBmp / pHtImage);
+                foreach (Vecteur V in pListePointsMatrice)
+                {
+                    Point PtTmp = Pt;
+                    PtTmp.Deplacer(V);
+                    Color C = _Editeur.GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
+                    Val += C.GetBrightness();
+                }
 
-                pGraph.FillRectangle(Brushes.Black, pX, pY, 1, 1);
+                Val /= pListePointsMatrice.Count;
+
+                Double Diam = 0;
+
+                foreach (Poincon Pc in _Sep.Poincons())
+                {
+                    if ((Val > Pc.Min) && (Val <= Pc.Max))
+                    {
+                        Diam = Pc.Diametre;
+                        break;
+                    }
+                }
+
+                int pX = (int)Math.Truncate(pDecalX + Pt.X * PxParMm - Diam * 0.5 * PxParMm);
+                int pY = (int)Math.Truncate(pDecalY + Pt.Y * PxParMm - Diam * 0.5 * PxParMm);
+
+                pGraph.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(Diam * PxParMm), (int)Math.Truncate(Diam * PxParMm));
             }
+
+            _Editeur.Liberer();
 
             pGraph.Dispose();
 

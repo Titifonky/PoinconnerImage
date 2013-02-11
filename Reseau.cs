@@ -28,10 +28,10 @@ namespace PoinconnerImage
             switch (TypeReseau)
             {
                 case TypeReseau_e.Carre:
-                    pNbH = Convert.ToInt32((Dimensions.Width - pDimH) / pDimH);
-                    pNbV = Convert.ToInt32((Dimensions.Height - pDimV) / pDimV);
-                    pDecalH = (Dimensions.Width - (pNbH * Diametre)) * 0.5;
-                    pDecalV = (Dimensions.Height - (pNbV * Diametre)) * 0.5;
+                    pNbH = (int)Math.Truncate((Dimensions.Width - pDimH) / pDimH);
+                    pNbV = (int)Math.Truncate((Dimensions.Height - pDimV) / pDimV);
+                    pDecalH = (Dimensions.Width - (pNbH * pDimH)) * 0.5;
+                    pDecalV = (Dimensions.Height - (pNbV * pDimV)) * 0.5;
 
                     for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
                         {
@@ -46,8 +46,8 @@ namespace PoinconnerImage
                 case TypeReseau_e.Hexagonal:
                     pDimV = (Diametre / Math.Cos(Math.PI / 12.0));
                     Double pDistV = pDimV * 3.0 / 4.0;
-                    pNbH = Convert.ToInt32((Dimensions.Width - pDimH) / pDimH);
-                    pNbV = Convert.ToInt32((Dimensions.Height - pDimV) / pDistV);
+                    pNbH = (int)Math.Truncate((Dimensions.Width - pDimH) / pDimH);
+                    pNbV = (int)Math.Truncate((Dimensions.Height - pDimV) / pDistV);
                     pDecalH = (Dimensions.Width - (pNbH * pDimH)) * 0.5;
                     pDecalV = (Dimensions.Height - (pNbV * pDistV)) * 0.5;
 
@@ -86,10 +86,10 @@ namespace PoinconnerImage
             Double pDecalH;
             Double pDecalV;
 
-            pNbH = Convert.ToInt32(Diametre / Pas);
-            pNbV = Convert.ToInt32(Diametre / Pas);
-            pDecalH = (Diametre - (pNbH * Diametre)) * 0.5;
-            pDecalV = (Diametre - (pNbV * Diametre)) * 0.5;
+            pNbH = (int)Math.Truncate(Diametre / Pas);
+            pNbV = (int)Math.Truncate(Diametre / Pas);
+            pDecalH = (Diametre - (pNbH * Pas)) * 0.5;
+            pDecalV = (Diametre - (pNbV * Pas)) * 0.5;
 
             Point PtCentre = new Point(pDimH * 0.5, pDimV * 0.5);
 
@@ -99,8 +99,8 @@ namespace PoinconnerImage
                     for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
                         {
                             Point pPt;
-                            pPt.X = pDecalH + (x * pDimH);
-                            pPt.Y = pDecalV + (y * pDimV);
+                            pPt.X = pDecalH + (x * Pas);
+                            pPt.Y = pDecalV + (y * Pas);
                             pListePoints.Add(pPt);
                         }
                     break;
@@ -113,8 +113,8 @@ namespace PoinconnerImage
                     for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
                         {
                             Point pPt;
-                            pPt.X = pDecalH + (x * pDimH);
-                            pPt.Y = pDecalV + (y * pDimV);
+                            pPt.X = pDecalH + (x * Pas);
+                            pPt.Y = pDecalV + (y * Pas);
 
                             Boolean T = true;
                             Point PtTest = pPt;
