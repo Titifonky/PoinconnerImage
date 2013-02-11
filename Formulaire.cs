@@ -58,7 +58,10 @@ namespace PoinconnerImage
 
                 VignetteImage.Image = _Editeur.Image;
 
-                BoxHistogram.Image = (Image)_Editeur.Histogramme(BoxHistogram.Size, Canal_e.Luminosite);
+                Size pSize = BoxHistogram.Size;
+                pSize.Width -= 20;
+
+                BoxHistogram.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Luminosite);
 
                 _Sep.Supprimer();
             }

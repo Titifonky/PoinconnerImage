@@ -55,8 +55,12 @@
             this.ValiderPoincon = new System.Windows.Forms.Button();
             this.VisualiserZones = new System.Windows.Forms.Button();
             this.Reinitialiser = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BoxHistogram)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // VignetteImage
@@ -276,6 +280,7 @@
             this.BoxHistogram.Location = new System.Drawing.Point(637, 270);
             this.BoxHistogram.Name = "BoxHistogram";
             this.BoxHistogram.Size = new System.Drawing.Size(627, 166);
+            this.BoxHistogram.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxHistogram.TabIndex = 25;
             this.BoxHistogram.TabStop = false;
             // 
@@ -309,11 +314,31 @@
             this.Reinitialiser.UseVisualStyleBackColor = true;
             this.Reinitialiser.Click += new System.EventHandler(this.Reinitialiser_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.White;
+            this.pictureBox1.Location = new System.Drawing.Point(637, 442);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(18, 18);
+            this.pictureBox1.TabIndex = 29;
+            this.pictureBox1.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.Color.Black;
+            this.pictureBox2.Location = new System.Drawing.Point(1246, 442);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(18, 18);
+            this.pictureBox2.TabIndex = 30;
+            this.pictureBox2.TabStop = false;
+            // 
             // Formulaire
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1276, 737);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.Reinitialiser);
             this.Controls.Add(this.VisualiserZones);
             this.Controls.Add(this.ValiderPoincon);
@@ -345,6 +370,8 @@
             this.Load += new System.EventHandler(this.Formulaire_Load);
             ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BoxHistogram)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -379,6 +406,8 @@
         private System.Windows.Forms.Button ValiderPoincon;
         private System.Windows.Forms.Button VisualiserZones;
         private System.Windows.Forms.Button Reinitialiser;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox2;
     }
 }
 

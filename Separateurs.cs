@@ -60,7 +60,7 @@ namespace NsSeparateurs
                 int pDiv;
 
                 if (pListeTexte.Count == 0)
-                    pSepG = AjouterSeparateur(0, 2);
+                    pSepG = AjouterSeparateur(0, 5);
                 else
                     pSepG = pListeTexte[pListeTexte.Count - 1].Droite;
 
@@ -164,7 +164,15 @@ namespace NsSeparateurs
             List<Poincon> pListePoincons = new List<Poincon>();
             foreach(Texte pTxt in _ListeTextes)
             {
-                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), pTxt.Gauche.X * _Echelle / _Box.Width, pTxt.Droite.X * _Echelle / _Box.Width);
+                Double A = (((_Box.Width - 10) - pTxt.Gauche.X) - 10) * _Echelle / (_Box.Width - 20);
+                Double B = (((_Box.Width - 10) - pTxt.Droite.X) - 10) * _Echelle / (_Box.Width - 20);
+
+                if (((_Box.Width - 10) - pTxt.Gauche.X) > (_Box.Width - 10))
+                    A = _Echelle;
+                if (((_Box.Width -10 ) - pTxt.Droite.X) < 10)
+                    B = 0;
+
+                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), B, A);
                 pListePoincons.Add(pPc);
             }
 

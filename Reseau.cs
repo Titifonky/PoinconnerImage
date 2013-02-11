@@ -33,7 +33,7 @@ namespace PoinconnerImage
                     pDecalH = (Dimensions.Width - (pNbH * pDimH)) * 0.5;
                     pDecalV = (Dimensions.Height - (pNbV * pDimV)) * 0.5;
 
-                    for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
+                    for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
                             Point pPt;
                             pPt.X = pDecalH + (x * pDimH);
@@ -86,17 +86,17 @@ namespace PoinconnerImage
             Double pDecalH;
             Double pDecalV;
 
-            pNbH = (int)Math.Truncate(Diametre / Pas);
-            pNbV = (int)Math.Truncate(Diametre / Pas);
-            pDecalH = (Diametre - (pNbH * Pas)) * 0.5;
-            pDecalV = (Diametre - (pNbV * Pas)) * 0.5;
+            pNbH = (int)Math.Truncate(pDimH / Pas);
+            pNbV = (int)Math.Truncate(pDimV / Pas);
+            pDecalH = (pDimH - (pNbH * Pas)) * 0.5;
+            pDecalV = (pDimV - (pNbV * Pas)) * 0.5;
 
             Point PtCentre = new Point(pDimH * 0.5, pDimV * 0.5);
 
             switch (TypeReseau)
             {
                 case TypeReseau_e.Carre:
-                    for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
+                    for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
                             Point pPt;
                             pPt.X = pDecalH + (x * Pas);
@@ -104,13 +104,18 @@ namespace PoinconnerImage
                             pListePoints.Add(pPt);
                         }
                     break;
+
                 case TypeReseau_e.Hexagonal:
-                    Double pCoteV = (Diametre / Math.Cos(Math.PI / 12.0));
+                    Double pCoteV = (pDimV / Math.Cos(Math.PI / 12.0));
                     Point Pt1 = new Point(0.0, pCoteV / 4.0);
                     Point Pt2 = new Point(pDimH * 0.5, 0.0);
+                    Point Pt3 = new Point(pDimH, pCoteV / 4.0);
+                    Point Pt4 = new Point(pDimH, pCoteV * 3.0 / 4.0);
+                    Point Pt5 = new Point(pDimH * 0.5, pCoteV);
+                    Point Pt6 = new Point(0.0, pCoteV * 3.0 / 4.0);
                     PtCentre.Y = pCoteV * 0.5;
 
-                    for (int y = 0; y <= pNbH; y++) for (int x = 0; x <= pNbV; x++)
+                    for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
                             Point pPt;
                             pPt.X = pDecalH + (x * Pas);
@@ -119,11 +124,11 @@ namespace PoinconnerImage
                             Boolean T = true;
                             Point PtTest = pPt;
 
-                            for (int i = 0; i < 4; i++)
-                            {
-                                T = T & SensHoraire(Pt1, Pt2, PtTest);
-                                Rotation90(PtCentre, ref PtTest);
-                            }
+                            T = T & SensHoraire(Pt1, Pt2, PtTest);
+                            T = T & SensHoraire(Pt2, Pt3, PtTest);
+                            T = T & SensHoraire(Pt4, Pt5, PtTest);
+                            T = T & SensHoraire(Pt5, Pt6, PtTest);
+
                             if (T)
                                 pListePoints.Add(pPt);
                         }
@@ -143,10 +148,20 @@ namespace PoinconnerImage
 
         private static void Rotation90(Point Centre, ref Point Pt)
         {
+            Pt.X -= Centre.X;
+            Pt.Y -= Centre.Y;
             Double X = Pt.X;
             Double Y = Pt.Y;
-            Pt.X = Y;
-            Pt.Y = -1 * X;
+            Pt.X = (-1 * Y) + Centre.X;
+            Pt.Y = X + Centre.Y;
+        }
+
+        private static void Symetrique(Point Centre, ref Point Pt, Boolean Verticale = true)
+        {
+            if (Verticale)
+                Pt.X = Centre.X + (Centre.X - Pt.X);
+            else
+                Pt.Y = Centre.Y + (Centre.Y - Pt.Y);
         }
 
         private static Boolean SensHoraire(Point Dep, Point Arr, Point Pt)
@@ -156,7 +171,7 @@ namespace PoinconnerImage
             Double A = (Arr.X - Dep.X) * (Pt.Y - Dep.Y);
             Double B = (Arr.Y - Dep.Y) * (Pt.X - Dep.X);
 
-            if (A < B)
+            if (A > B)
                 T = true;
 
             return T;

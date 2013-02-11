@@ -358,7 +358,7 @@ namespace NsEditerImage
                             Val = 0;
                             break;
                     }
-                    pixels_map[j + Width * i] = Convert.ToInt32(Math.Round(Val, 0));
+                    pixels_map[j + Width * i] = Convert.ToInt32(Math.Round(byteMaxValue - Val, 0));
                 }
             }
 
