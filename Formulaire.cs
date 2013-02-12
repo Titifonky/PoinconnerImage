@@ -221,7 +221,10 @@ namespace PoinconnerImage
         }
         private void VisualiserNoirEtBlanc_Click(object sender, EventArgs e)
         {
-            EditerImage pEditeur = new EditerImage(_Editeur.Image);
+            Bitmap pBitmap = new Bitmap(_Editeur.Image);
+            EditerImage pEditeur = new EditerImage((Image)pBitmap);
+
+            List<Poincon> pListePoincons = _SepLuminosite.Poincons();
 
 
 
