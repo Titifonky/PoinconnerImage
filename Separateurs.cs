@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace NsSeparateurs
+namespace NsPlages
 {
-    public class Poincon
+    public class Plage
     {
-        public Double Diametre { get { return _Diametre; } }
+        public Double Intitule { get { return _Intitule; } }
         public Double Min { get { return _Min; } }
         public Double Max { get { return _Max; } }
 
-        private Double _Diametre;
+        private Double _Intitule;
         private Double _Min;
         private Double _Max;
 
-        public Poincon(Double Diametre, Double Min, Double Max)
+        public Plage(Double Intitule, Double Min, Double Max)
         {
-            _Diametre = Diametre;
+            _Intitule = Intitule;
             _Min = Min;
             _Max = Max;
         }
     }
 
-    public class Separateurs
+    public class Plages
     {
         private Pen _Pen = Pens.Red;
         private PictureBox _Box;
@@ -32,11 +32,11 @@ namespace NsSeparateurs
         private int _LgHistogramme;
         private List<Separateur> _ListeSeps = new List<Separateur>();
         private List<Texte> _ListeTextes = new List<Texte>();
-        private List<Poincon> _ListePoincons = new List<Poincon>();
+        private List<Plage> _ListePlages = new List<Plage>();
 
         public int LgHistogramme { get { return _LgHistogramme; } set { _LgHistogramme = value; } }
 
-        public Separateurs(PictureBox Box, Double Echelle)
+        public Plages(PictureBox Box, Double Echelle)
         {
             if (Box != null)
             {
@@ -45,16 +45,16 @@ namespace NsSeparateurs
             }
         }
 
-        public void Diametres(List<String> ListePoincons)
+        public void Intitules(List<String> ListeIntitules)
         {
             List<Texte> pListeTexte = _ListeTextes;
 
-            for (int i = 0; i < Math.Min(ListePoincons.Count, pListeTexte.Count); i++)
+            for (int i = 0; i < Math.Min(ListeIntitules.Count, pListeTexte.Count); i++)
             {
-                pListeTexte[i].Nom = ListePoincons[i];
+                pListeTexte[i].Nom = ListeIntitules[i];
             }
 
-            if (ListePoincons.Count > pListeTexte.Count)
+            if (ListeIntitules.Count > pListeTexte.Count)
             {
                 Separateur pSepG;
 
@@ -68,25 +68,25 @@ namespace NsSeparateurs
                 if ((_Box.Width - pSepG.X) < 10)
                 {
                     Separateur pSepTmp = pListeTexte[pListeTexte.Count - 1].Gauche;
-                    pDiv = (_Box.Width - 5 - pSepTmp.X) / (1 + ListePoincons.Count - pListeTexte.Count);
+                    pDiv = (_Box.Width - 5 - pSepTmp.X) / (1 + ListeIntitules.Count - pListeTexte.Count);
                     pSepG.X = pSepTmp.X + pDiv;
                 }
                 else
-                    pDiv = (_Box.Width - 5 - pSepG.X) / (ListePoincons.Count - pListeTexte.Count);
+                    pDiv = (_Box.Width - 5 - pSepG.X) / (ListeIntitules.Count - pListeTexte.Count);
 
-                for (int i = pListeTexte.Count; i < ListePoincons.Count; i++)
+                for (int i = pListeTexte.Count; i < ListeIntitules.Count; i++)
                 {
                     Separateur pSepD = AjouterSeparateur(pSepG.No + 1, pSepG.X + pDiv);
-                    AjouterTexte(ListePoincons[i], pSepG, pSepD);
+                    AjouterTexte(ListeIntitules[i], pSepG, pSepD);
                     pSepG = pSepD;
                 }
             }
-            else if (ListePoincons.Count < pListeTexte.Count)
+            else if (ListeIntitules.Count < pListeTexte.Count)
             {
-                if (ListePoincons.Count == 0)
+                if (ListeIntitules.Count == 0)
                     Supprimer();
                 else
-                    for (int i = (pListeTexte.Count - 1); i >= ListePoincons.Count; i--)
+                    for (int i = (pListeTexte.Count - 1); i >= ListeIntitules.Count; i--)
                     {
                         Texte pTxt = pListeTexte[i];
                         SupprimerSeparateur(pTxt.Droite);
@@ -160,9 +160,9 @@ namespace NsSeparateurs
             _Box.Refresh();
         }
 
-        public List<Poincon> Poincons()
+        public List<Plage> ListePlages()
         {
-            List<Poincon> pListePoincons = new List<Poincon>();
+            List<Plage> pListePoincons = new List<Plage>();
 
             // Plage de calcul des valeurs
             int Plage = _Box.Width - (int)Math.Truncate((_Box.Width - _LgHistogramme) * 0.5);
@@ -183,7 +183,7 @@ namespace NsSeparateurs
                 if (pMin < 0)
                     pMin = 0;
 
-                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), pMin, pMax);
+                Plage pPc = new Plage(Convert.ToDouble(pTxt.Nom), pMin, pMax);
                 pListePoincons.Add(pPc);
             }
 
@@ -192,7 +192,7 @@ namespace NsSeparateurs
 
     }
 
-    public class Separateur
+    private class Separateur
     {
         public int No { get { return _No; } }
         public int Tolerance { get; set; }
@@ -330,7 +330,7 @@ namespace NsSeparateurs
         }
     }
 
-    public class Texte
+    private class Texte
     {
         public String Nom { get { return _Nom; } set { _Nom = value; } }
         public float Taille { set { _Police = new Font("Arial", value); ; } }

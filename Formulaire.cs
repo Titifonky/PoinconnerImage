@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using NsSeparateurs;
+using NsPlages;
 using NsEditerImage;
 using System.Diagnostics;
 
@@ -15,10 +15,10 @@ namespace PoinconnerImage
         private Bitmap pImage;
         private Poinconneuse Poinconner = new Poinconneuse();
         private NameValueCollection Data = new NameValueCollection();
-        private Separateurs _SepLuminosite;
-        private Separateurs _SepRouge;
-        private Separateurs _SepVert;
-        private Separateurs _SepBleu;
+        private Plages _SepLuminosite;
+        private Plages _SepRouge;
+        private Plages _SepVert;
+        private Plages _SepBleu;
         private EditerImage _Editeur;
 
         public Formulaire()
@@ -31,10 +31,10 @@ namespace PoinconnerImage
             TypeCarroyage.SetSelected(0, true);
             Lancer.Enabled = false;
             Jeu.Text = "2";
-            _SepLuminosite = new Separateurs(BoxLuminosite, 1);
-            _SepRouge = new Separateurs(BoxRouge, 255);
-            _SepVert = new Separateurs(BoxVert, 255);
-            _SepBleu = new Separateurs(BoxBleu, 255);
+            _SepLuminosite = new Plages(BoxLuminosite, 1);
+            _SepRouge = new Plages(BoxRouge, 255);
+            _SepVert = new Plages(BoxVert, 255);
+            _SepBleu = new Plages(BoxBleu, 255);
         }
 
         private void Formulaire_FormClosing(object sender, FormClosingEventArgs e)
@@ -84,11 +84,11 @@ namespace PoinconnerImage
 
                 _SepLuminosite.Supprimer();
                 _SepRouge.Supprimer();
-                _SepRouge.Diametres(pListe);
+                _SepRouge.Intitules(pListe);
                 _SepVert.Supprimer();
-                _SepVert.Diametres(pListe);
+                _SepVert.Intitules(pListe);
                 _SepBleu.Supprimer();
-                _SepBleu.Diametres(pListe);
+                _SepBleu.Intitules(pListe);
             }
 
             Valider();
@@ -131,7 +131,7 @@ namespace PoinconnerImage
                     pListePoincons.Add(S);
             }
 
-            _SepLuminosite.Diametres(pListePoincons);
+            _SepLuminosite.Intitules(pListePoincons);
 
         }
 
@@ -177,7 +177,7 @@ namespace PoinconnerImage
             Size pDimTole = new System.Drawing.Size(pLgImage, pHtImage);
             List<Point> pListePointsReseau = Reseau.ListePointsReseau(pDimTole, DiamMax, TypeReseau);
             List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
-            List<Poincon> pListePoincons = _SepLuminosite.Poincons();
+            List<Plage> pListePoincons = _SepLuminosite.ListePlages();
 
             Graphics pGraph = VignetteImage.CreateGraphics();
 
@@ -199,11 +199,11 @@ namespace PoinconnerImage
 
                 Double Diam = 0;
 
-                foreach (Poincon Pc in pListePoincons)
+                foreach (Plage Pc in pListePoincons)
                 {
                     if ((Val > Pc.Min) && (Val <= Pc.Max))
                     {
-                        Diam = Pc.Diametre;
+                        Diam = Pc.Intitule;
                         break;
                     }
                 }
@@ -224,7 +224,7 @@ namespace PoinconnerImage
             Bitmap pBitmap = new Bitmap(_Editeur.Image);
             EditerImage pEditeur = new EditerImage((Image)pBitmap);
 
-            List<Poincon> pListePoincons = _SepLuminosite.Poincons();
+            List<Plage> pListePlages = _SepLuminosite.ListePlages();
 
 
 

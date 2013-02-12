@@ -8,6 +8,12 @@ using DXFLibrary;
 
 namespace PoinconnerImage
 {
+    public struct Poincon
+    {
+        public Double Diametre;
+        public Point Point;
+    }
+
     public struct Vecteur
     {
         public Vecteur(Double X, Double Y)
