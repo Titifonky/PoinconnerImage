@@ -15,7 +15,10 @@ namespace PoinconnerImage
         private Bitmap pImage;
         private Poinconneuse Poinconner = new Poinconneuse();
         private NameValueCollection Data = new NameValueCollection();
-        private Separateurs _Sep;
+        private Separateurs _SepLuminosite;
+        private Separateurs _SepRouge;
+        private Separateurs _SepVert;
+        private Separateurs _SepBleu;
         private EditerImage _Editeur;
 
         public Formulaire()
@@ -28,7 +31,10 @@ namespace PoinconnerImage
             TypeCarroyage.SetSelected(0, true);
             Lancer.Enabled = false;
             Jeu.Text = "2";
-            _Sep = new Separateurs(BoxHistogram, 1);
+            _SepLuminosite = new Separateurs(BoxLuminosite, 1);
+            _SepRouge = new Separateurs(BoxRouge, 255);
+            _SepVert = new Separateurs(BoxVert, 255);
+            _SepBleu = new Separateurs(BoxBleu, 255);
         }
 
         private void Formulaire_FormClosing(object sender, FormClosingEventArgs e)
@@ -54,16 +60,35 @@ namespace PoinconnerImage
                 pImage = new Bitmap(CheminImage.Text);
 
                 _Editeur = new EditerImage(pImage);
-                _Editeur.Redimensionner(VignetteImage.Size);
+
+                if ((pImage.Width > VignetteImage.Width) || (pImage.Height > VignetteImage.Height))
+                    _Editeur.Redimensionner(VignetteImage.Size);
 
                 VignetteImage.Image = _Editeur.Image;
 
-                Size pSize = BoxHistogram.Size;
+                Size pSize = BoxLuminosite.Size;
                 pSize.Width -= 20;
 
-                BoxHistogram.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Luminosite);
+                _SepLuminosite.LgHistogramme = pSize.Width;
+                _SepRouge.LgHistogramme = pSize.Width;
+                _SepVert.LgHistogramme = pSize.Width;
+                _SepBleu.LgHistogramme = pSize.Width;
 
-                _Sep.Supprimer();
+                BoxLuminosite.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Luminosite);
+                BoxRouge.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Rouge);
+                BoxVert.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Vert);
+                BoxBleu.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Bleu);
+
+                List<string> pListe = new List<string>();
+                pListe.Add(" ");
+
+                _SepLuminosite.Supprimer();
+                _SepRouge.Supprimer();
+                _SepRouge.Diametres(pListe);
+                _SepVert.Supprimer();
+                _SepVert.Diametres(pListe);
+                _SepBleu.Supprimer();
+                _SepBleu.Diametres(pListe);
             }
 
             Valider();
@@ -106,7 +131,7 @@ namespace PoinconnerImage
                     pListePoincons.Add(S);
             }
 
-            _Sep.Diametres(pListePoincons);
+            _SepLuminosite.Diametres(pListePoincons);
 
         }
 
@@ -152,6 +177,7 @@ namespace PoinconnerImage
             Size pDimTole = new System.Drawing.Size(pLgImage, pHtImage);
             List<Point> pListePointsReseau = Reseau.ListePointsReseau(pDimTole, DiamMax, TypeReseau);
             List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
+            List<Poincon> pListePoincons = _SepLuminosite.Poincons();
 
             Graphics pGraph = VignetteImage.CreateGraphics();
 
@@ -173,7 +199,7 @@ namespace PoinconnerImage
 
                 Double Diam = 0;
 
-                foreach (Poincon Pc in _Sep.Poincons())
+                foreach (Poincon Pc in pListePoincons)
                 {
                     if ((Val > Pc.Min) && (Val <= Pc.Max))
                     {
@@ -193,6 +219,15 @@ namespace PoinconnerImage
             pGraph.Dispose();
 
         }
+        private void VisualiserNoirEtBlanc_Click(object sender, EventArgs e)
+        {
+            EditerImage pEditeur = new EditerImage(_Editeur.Image);
+
+
+
+            //Color C = _Editeur.GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
+        }
+
 
         private void Reinitialiser_Click(object sender, EventArgs e)
         {
@@ -296,6 +331,8 @@ namespace PoinconnerImage
 
             return Test;
         }
+
+        
 
     }
 }

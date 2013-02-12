@@ -29,17 +29,18 @@ namespace NsSeparateurs
         private PictureBox _Box;
         private int Tolerance = 2;
         private Double _Echelle = 1;
+        private int _LgHistogramme;
         private List<Separateur> _ListeSeps = new List<Separateur>();
         private List<Texte> _ListeTextes = new List<Texte>();
-        private Graphics _Graphique;
         private List<Poincon> _ListePoincons = new List<Poincon>();
+
+        public int LgHistogramme { get { return _LgHistogramme; } set { _LgHistogramme = value; } }
 
         public Separateurs(PictureBox Box, Double Echelle)
         {
             if (Box != null)
             {
                 _Box = Box;
-                _Graphique = _Box.CreateGraphics();
                 _Echelle = Echelle;
             }
         }
@@ -117,7 +118,7 @@ namespace NsSeparateurs
             if (X > _Box.Width || X < 0)
                 return null;
 
-            Separateur Sep = new Separateur(No, _Pen, X, _Graphique, _Box, _ListeSeps);
+            Separateur Sep = new Separateur(No, _Pen, X, _Box, _ListeSeps);
             if (Sep != null)
             {
                 Sep.Tolerance = Tolerance;
@@ -140,7 +141,7 @@ namespace NsSeparateurs
         {
             if ((!String.IsNullOrEmpty(Nom)) || (Gauche != null) || (Droite != null))
             {
-                Texte Text = new Texte(Nom, Gauche, Droite, _Graphique, _Box, _ListeTextes);
+                Texte Text = new Texte(Nom, Gauche, Droite, _Box, _ListeTextes);
                 if (Text != null)
                 {
                     _ListeTextes.Add(Text);
@@ -162,17 +163,27 @@ namespace NsSeparateurs
         public List<Poincon> Poincons()
         {
             List<Poincon> pListePoincons = new List<Poincon>();
+
+            // Plage de calcul des valeurs
+            int Plage = _Box.Width - (int)Math.Truncate((_Box.Width - _LgHistogramme) * 0.5);
+
             foreach(Texte pTxt in _ListeTextes)
             {
-                Double A = (((_Box.Width - 10) - pTxt.Gauche.X) - 10) * _Echelle / (_Box.Width - 20);
-                Double B = (((_Box.Width - 10) - pTxt.Droite.X) - 10) * _Echelle / (_Box.Width - 20);
 
-                if (((_Box.Width - 10) - pTxt.Gauche.X) > (_Box.Width - 10))
-                    A = _Echelle;
-                if (((_Box.Width -10 ) - pTxt.Droite.X) < 10)
-                    B = 0;
+                // Calcul des valeurs Min et Max en fonction des dimensions de la boite, de l'histogramme et de l'echelle
+                // On prend comme reference le bord droit. Il faut inverser les valeurs
+                Double pMax = (Plage - pTxt.Gauche.X) * _Echelle / _LgHistogramme;
+                Double pMin = (Plage - pTxt.Droite.X) * _Echelle / _LgHistogramme;
 
-                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), B, A);
+                // Si le separateur Gauche se trouve dans la partie vide
+                if (pMax > _Echelle)
+                    pMax = _Echelle;
+
+                // Si le separateur de Droite se trouve dans la partie vide
+                if (pMin < 0)
+                    pMin = 0;
+
+                Poincon pPc = new Poincon(Convert.ToDouble(pTxt.Nom), pMin, pMax);
                 pListePoincons.Add(pPc);
             }
 
@@ -208,7 +219,6 @@ namespace NsSeparateurs
         private int _X;
         private Point _Depart = new Point();
         private Point _Fin = new Point();
-        private Graphics _Graphique;
         private PictureBox _Box;
         private int _min = 0;
         private int _max = 10000;
@@ -221,14 +231,13 @@ namespace NsSeparateurs
         private MouseEventHandler _EvMsMove;
         private MouseEventHandler _EvMsUp;
 
-        public Separateur(int No, Pen Pen, int X, Graphics Graphique, PictureBox Box, List<Separateur> ListeSep)
+        public Separateur(int No, Pen Pen, int X, PictureBox Box, List<Separateur> ListeSep)
         {
             if ((Pen != null) || (Box != null) || (ListeSep != null))
             {
                 _No = No;
                 _Pen = Pen;
                 _X = X;
-                _Graphique = Graphique;
                 _Box = Box;
                 _ListeSep = ListeSep;
                 _Depart = new Point(X, 0);
@@ -259,7 +268,6 @@ namespace NsSeparateurs
 
             _Box.Refresh();
             _Box = null;
-            _Graphique = null;
         }
 
         public bool IsPointOnLine(Point Pt)
@@ -335,20 +343,18 @@ namespace NsSeparateurs
         private String _Nom;
         private Separateur _Gauche;
         private Separateur _Droite;
-        private Graphics _Graphique;
         private PictureBox _Box;
         private List<Texte> _ListeText;
 
         private PaintEventHandler _EvPaint;
 
-        public Texte(String Nom, Separateur Gauche, Separateur Droite, Graphics Graphique, PictureBox Box, List<Texte> ListeText)
+        public Texte(String Nom, Separateur Gauche, Separateur Droite, PictureBox Box, List<Texte> ListeText)
         {
             if ((Gauche != null) || (Droite != null) || (Box != null) || (ListeText != null))
             {
                 _Nom = Nom;
                 _Gauche = Gauche;
                 _Droite = Droite;
-                _Graphique = Graphique;
                 _Box = Box;
                 _Format.Alignment = StringAlignment.Center;
                 _Format.LineAlignment = StringAlignment.Center;
@@ -370,7 +376,6 @@ namespace NsSeparateurs
             _Police.Dispose();
             _Brosse.Dispose();
             _Format.Dispose();
-            _Graphique = null;
         }
 
         private void Box_Paint(object sender, PaintEventArgs e)
