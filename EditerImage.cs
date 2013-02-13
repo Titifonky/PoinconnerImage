@@ -2,6 +2,9 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Collections.Generic;
+using NsPlages;
+using NsReseau;
 
 namespace NsEditerImage
 {
@@ -14,6 +17,43 @@ namespace NsEditerImage
         Teinte = 8,
         Saturation = 16,
         Luminosite = 32
+    }
+
+    public struct Poincon
+    {
+        public Double Diametre;
+        public MathPoint Point;
+    }
+
+    public struct MathVecteur
+    {
+        public MathVecteur(Double X, Double Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
+        public MathVecteur(MathPoint Pt1, MathPoint Pt2)
+        {
+            this.X = Pt2.X - Pt1.X;
+            this.Y = Pt2.Y - Pt1.Y;
+        }
+        public Double X;
+        public Double Y;
+        public void Deplacer(MathVecteur Vec)
+        { X += Vec.X; Y += Vec.Y; }
+    }
+
+    public struct MathPoint
+    {
+        public MathPoint(Double X, Double Y)
+        {
+            this.X = X;
+            this.Y = Y;
+        }
+        public Double X;
+        public Double Y;
+        public void Deplacer(MathVecteur Vec)
+        { X += Vec.X; Y += Vec.Y; }
     }
 
     public class EditerImage
@@ -309,6 +349,61 @@ namespace NsEditerImage
             Graphic_Histogram.FillPolygon(Pen.Brush, Points);
 
             return Image_Histogram;
+        }
+
+        public List<Poincon> ListePoincons(List<Plage> ListePlages, Double Jeu, Size DimFinale, TypeReseau_e TypeReseau)
+        {
+            List<Poincon> pListePoincons = new List<Poincon>();
+
+            Double DiamMax = 0;
+            foreach (Plage P in ListePlages)
+            {
+                if (P.Intitule > DiamMax)
+                    DiamMax = P.Intitule;
+            }
+
+            DiamMax += Jeu;
+
+            Double MmParPx = (Double)DimFinale.Width / (Double)_Bmp.Size.Width;
+            Double PxParMm = 1.0 / MmParPx;
+
+            List<MathPoint> pListePointsReseau = Reseau.ListePointsReseau(DimFinale, DiamMax, TypeReseau);
+            List<MathVecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
+
+            Verrouiller();
+
+            foreach (MathPoint Pt in pListePointsReseau)
+            {
+                float Val = 0;
+
+                foreach (MathVecteur V in pListePointsMatrice)
+                {
+                    MathPoint PtTmp = Pt;
+                    PtTmp.Deplacer(V);
+                    Color C = GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
+                    Val += C.GetBrightness();
+                }
+
+                Val /= pListePointsMatrice.Count;
+
+                Poincon pPc = new Poincon();
+                pPc.Point = Pt;
+
+                foreach (Plage Pc in ListePlages)
+                {
+                    if ((Val > Pc.Min) && (Val <= Pc.Max))
+                    {
+                        pPc.Diametre = Pc.Intitule;
+                        break;
+                    }
+                }
+
+                pListePoincons.Add(pPc);
+            }
+
+            Liberer();
+
+            return pListePoincons;
         }
 
         private void Add(ref int[] x, int[] y)

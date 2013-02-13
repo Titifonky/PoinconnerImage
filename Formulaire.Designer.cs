@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.VignetteImage = new System.Windows.Forms.PictureBox();
             this.OuvrirFichierImage = new System.Windows.Forms.OpenFileDialog();
             this.CheminImage = new System.Windows.Forms.TextBox();
             this.ChercherImage = new System.Windows.Forms.Button();
@@ -59,6 +58,10 @@
             this.BoxLuminosite = new System.Windows.Forms.PictureBox();
             this.Fichiers = new System.Windows.Forms.GroupBox();
             this.Couleur = new System.Windows.Forms.GroupBox();
+            this.AppliquerBleu = new System.Windows.Forms.Button();
+            this.AppliquerVert = new System.Windows.Forms.Button();
+            this.AppliquerRouge = new System.Windows.Forms.Button();
+            this.AppliquerLuminosite = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -73,9 +76,10 @@
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.VisualiserNoirEtBlanc = new System.Windows.Forms.Button();
-            this.MajLuminosité = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).BeginInit();
+            this.VignetteImage = new System.Windows.Forms.PictureBox();
+            this.ControleVignette = new System.Windows.Forms.GroupBox();
+            this.MasquerVignette = new System.Windows.Forms.RadioButton();
+            this.AfficherVignette = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BoxLuminosite)).BeginInit();
@@ -91,17 +95,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).BeginInit();
+            this.ControleVignette.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // VignetteImage
-            // 
-            this.VignetteImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.VignetteImage.Location = new System.Drawing.Point(12, 12);
-            this.VignetteImage.Name = "VignetteImage";
-            this.VignetteImage.Size = new System.Drawing.Size(700, 700);
-            this.VignetteImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.VignetteImage.TabIndex = 0;
-            this.VignetteImage.TabStop = false;
             // 
             // OuvrirFichierImage
             // 
@@ -113,7 +109,7 @@
             this.CheminImage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CheminImage.Location = new System.Drawing.Point(6, 45);
             this.CheminImage.Name = "CheminImage";
-            this.CheminImage.Size = new System.Drawing.Size(688, 22);
+            this.CheminImage.Size = new System.Drawing.Size(555, 22);
             this.CheminImage.TabIndex = 2;
             this.CheminImage.TextChanged += new System.EventHandler(this.CheminImage_TextChanged);
             // 
@@ -133,7 +129,7 @@
             this.CheminDossier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CheminDossier.Location = new System.Drawing.Point(6, 131);
             this.CheminDossier.Name = "CheminDossier";
-            this.CheminDossier.Size = new System.Drawing.Size(688, 22);
+            this.CheminDossier.Size = new System.Drawing.Size(555, 22);
             this.CheminDossier.TabIndex = 5;
             this.CheminDossier.TextChanged += new System.EventHandler(this.CheminDossier_TextChanged);
             // 
@@ -190,7 +186,7 @@
             // Lancer
             // 
             this.Lancer.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Lancer.Location = new System.Drawing.Point(1430, 501);
+            this.Lancer.Location = new System.Drawing.Point(1290, 519);
             this.Lancer.Name = "Lancer";
             this.Lancer.Size = new System.Drawing.Size(262, 43);
             this.Lancer.TabIndex = 13;
@@ -317,27 +313,28 @@
             this.ValiderPoincon.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ValiderPoincon.Location = new System.Drawing.Point(353, 41);
             this.ValiderPoincon.Name = "ValiderPoincon";
-            this.ValiderPoincon.Size = new System.Drawing.Size(75, 23);
+            this.ValiderPoincon.Size = new System.Drawing.Size(33, 23);
             this.ValiderPoincon.TabIndex = 26;
-            this.ValiderPoincon.Text = "Valider";
+            this.ValiderPoincon.Text = "Ok";
             this.ValiderPoincon.UseVisualStyleBackColor = true;
             this.ValiderPoincon.Click += new System.EventHandler(this.ValiderPoincon_Click);
             // 
             // VisualiserPoincons
             // 
-            this.VisualiserPoincons.Location = new System.Drawing.Point(1461, 293);
+            this.VisualiserPoincons.Location = new System.Drawing.Point(1320, 446);
             this.VisualiserPoincons.Name = "VisualiserPoincons";
             this.VisualiserPoincons.Size = new System.Drawing.Size(193, 23);
             this.VisualiserPoincons.TabIndex = 27;
             this.VisualiserPoincons.Text = "Visualiser les poinçons dans l\'aperçu";
             this.VisualiserPoincons.UseVisualStyleBackColor = true;
-            this.VisualiserPoincons.Click += new System.EventHandler(this.VisualiserZones_Click);
+            this.VisualiserPoincons.Click += new System.EventHandler(this.VisualiserPoincons_Click);
             // 
             // Reinitialiser
             // 
-            this.Reinitialiser.Location = new System.Drawing.Point(1497, 322);
+            this.Reinitialiser.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Reinitialiser.Location = new System.Drawing.Point(209, 831);
             this.Reinitialiser.Name = "Reinitialiser";
-            this.Reinitialiser.Size = new System.Drawing.Size(121, 23);
+            this.Reinitialiser.Size = new System.Drawing.Size(151, 30);
             this.Reinitialiser.TabIndex = 28;
             this.Reinitialiser.Text = "Reinitialiser";
             this.Reinitialiser.UseVisualStyleBackColor = true;
@@ -347,7 +344,7 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(6, 191);
+            this.pictureBox1.Location = new System.Drawing.Point(6, 189);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(18, 18);
             this.pictureBox1.TabIndex = 29;
@@ -357,7 +354,7 @@
             // 
             this.pictureBox2.BackColor = System.Drawing.Color.Black;
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(641, 191);
+            this.pictureBox2.Location = new System.Drawing.Point(563, 189);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(18, 18);
             this.pictureBox2.TabIndex = 30;
@@ -366,9 +363,9 @@
             // BoxLuminosite
             // 
             this.BoxLuminosite.BackColor = System.Drawing.Color.White;
-            this.BoxLuminosite.Location = new System.Drawing.Point(6, 19);
+            this.BoxLuminosite.Location = new System.Drawing.Point(6, 17);
             this.BoxLuminosite.Name = "BoxLuminosite";
-            this.BoxLuminosite.Size = new System.Drawing.Size(653, 166);
+            this.BoxLuminosite.Size = new System.Drawing.Size(575, 166);
             this.BoxLuminosite.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxLuminosite.TabIndex = 25;
             this.BoxLuminosite.TabStop = false;
@@ -385,17 +382,22 @@
             this.Fichiers.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Fichiers.Location = new System.Drawing.Point(12, 718);
             this.Fichiers.Name = "Fichiers";
-            this.Fichiers.Size = new System.Drawing.Size(700, 183);
+            this.Fichiers.Size = new System.Drawing.Size(594, 183);
             this.Fichiers.TabIndex = 32;
             this.Fichiers.TabStop = false;
             this.Fichiers.Text = "Fichiers";
             // 
             // Couleur
             // 
+            this.Couleur.Controls.Add(this.AppliquerBleu);
+            this.Couleur.Controls.Add(this.AppliquerVert);
+            this.Couleur.Controls.Add(this.AppliquerRouge);
+            this.Couleur.Controls.Add(this.AppliquerLuminosite);
             this.Couleur.Controls.Add(this.label14);
             this.Couleur.Controls.Add(this.label13);
             this.Couleur.Controls.Add(this.label12);
             this.Couleur.Controls.Add(this.label11);
+            this.Couleur.Controls.Add(this.Reinitialiser);
             this.Couleur.Controls.Add(this.BoxBleu);
             this.Couleur.Controls.Add(this.pictureBox10);
             this.Couleur.Controls.Add(this.pictureBox11);
@@ -408,18 +410,54 @@
             this.Couleur.Controls.Add(this.BoxLuminosite);
             this.Couleur.Controls.Add(this.pictureBox1);
             this.Couleur.Controls.Add(this.pictureBox2);
-            this.Couleur.Location = new System.Drawing.Point(718, 12);
+            this.Couleur.Location = new System.Drawing.Point(612, 12);
             this.Couleur.Name = "Couleur";
-            this.Couleur.Size = new System.Drawing.Size(671, 867);
+            this.Couleur.Size = new System.Drawing.Size(587, 867);
             this.Couleur.TabIndex = 33;
             this.Couleur.TabStop = false;
             this.Couleur.Text = "Gestion des couleurs";
+            // 
+            // AppliquerBleu
+            // 
+            this.AppliquerBleu.Location = new System.Drawing.Point(257, 783);
+            this.AppliquerBleu.Name = "AppliquerBleu";
+            this.AppliquerBleu.Size = new System.Drawing.Size(75, 23);
+            this.AppliquerBleu.TabIndex = 47;
+            this.AppliquerBleu.Text = "Appliquer";
+            this.AppliquerBleu.UseVisualStyleBackColor = true;
+            // 
+            // AppliquerVert
+            // 
+            this.AppliquerVert.Location = new System.Drawing.Point(257, 587);
+            this.AppliquerVert.Name = "AppliquerVert";
+            this.AppliquerVert.Size = new System.Drawing.Size(75, 23);
+            this.AppliquerVert.TabIndex = 46;
+            this.AppliquerVert.Text = "Appliquer";
+            this.AppliquerVert.UseVisualStyleBackColor = true;
+            // 
+            // AppliquerRouge
+            // 
+            this.AppliquerRouge.Location = new System.Drawing.Point(275, 391);
+            this.AppliquerRouge.Name = "AppliquerRouge";
+            this.AppliquerRouge.Size = new System.Drawing.Size(75, 23);
+            this.AppliquerRouge.TabIndex = 45;
+            this.AppliquerRouge.Text = "Appliquer";
+            this.AppliquerRouge.UseVisualStyleBackColor = true;
+            // 
+            // AppliquerLuminosite
+            // 
+            this.AppliquerLuminosite.Location = new System.Drawing.Point(313, 189);
+            this.AppliquerLuminosite.Name = "AppliquerLuminosite";
+            this.AppliquerLuminosite.Size = new System.Drawing.Size(75, 23);
+            this.AppliquerLuminosite.TabIndex = 44;
+            this.AppliquerLuminosite.Text = "Appliquer";
+            this.AppliquerLuminosite.UseVisualStyleBackColor = true;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(302, 838);
+            this.label14.Location = new System.Drawing.Point(213, 784);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(41, 18);
             this.label14.TabIndex = 43;
@@ -430,7 +468,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(302, 632);
+            this.label13.Location = new System.Drawing.Point(213, 588);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(38, 18);
             this.label13.TabIndex = 42;
@@ -441,7 +479,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(301, 425);
+            this.label12.Location = new System.Drawing.Point(212, 392);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(57, 18);
             this.label12.TabIndex = 41;
@@ -452,7 +490,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(301, 188);
+            this.label11.Location = new System.Drawing.Point(211, 189);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(96, 20);
             this.label11.TabIndex = 40;
@@ -462,9 +500,9 @@
             // BoxBleu
             // 
             this.BoxBleu.BackColor = System.Drawing.Color.White;
-            this.BoxBleu.Location = new System.Drawing.Point(6, 669);
+            this.BoxBleu.Location = new System.Drawing.Point(6, 612);
             this.BoxBleu.Name = "BoxBleu";
-            this.BoxBleu.Size = new System.Drawing.Size(653, 166);
+            this.BoxBleu.Size = new System.Drawing.Size(575, 166);
             this.BoxBleu.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxBleu.TabIndex = 37;
             this.BoxBleu.TabStop = false;
@@ -473,7 +511,7 @@
             // 
             this.pictureBox10.BackColor = System.Drawing.Color.White;
             this.pictureBox10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox10.Location = new System.Drawing.Point(6, 841);
+            this.pictureBox10.Location = new System.Drawing.Point(6, 784);
             this.pictureBox10.Name = "pictureBox10";
             this.pictureBox10.Size = new System.Drawing.Size(18, 18);
             this.pictureBox10.TabIndex = 38;
@@ -483,7 +521,7 @@
             // 
             this.pictureBox11.BackColor = System.Drawing.Color.Blue;
             this.pictureBox11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox11.Location = new System.Drawing.Point(641, 841);
+            this.pictureBox11.Location = new System.Drawing.Point(563, 784);
             this.pictureBox11.Name = "pictureBox11";
             this.pictureBox11.Size = new System.Drawing.Size(18, 18);
             this.pictureBox11.TabIndex = 39;
@@ -492,9 +530,9 @@
             // BoxVert
             // 
             this.BoxVert.BackColor = System.Drawing.Color.White;
-            this.BoxVert.Location = new System.Drawing.Point(6, 463);
+            this.BoxVert.Location = new System.Drawing.Point(6, 416);
             this.BoxVert.Name = "BoxVert";
-            this.BoxVert.Size = new System.Drawing.Size(653, 166);
+            this.BoxVert.Size = new System.Drawing.Size(575, 166);
             this.BoxVert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxVert.TabIndex = 34;
             this.BoxVert.TabStop = false;
@@ -503,7 +541,7 @@
             // 
             this.pictureBox7.BackColor = System.Drawing.Color.White;
             this.pictureBox7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox7.Location = new System.Drawing.Point(6, 635);
+            this.pictureBox7.Location = new System.Drawing.Point(6, 588);
             this.pictureBox7.Name = "pictureBox7";
             this.pictureBox7.Size = new System.Drawing.Size(18, 18);
             this.pictureBox7.TabIndex = 35;
@@ -513,7 +551,7 @@
             // 
             this.pictureBox8.BackColor = System.Drawing.Color.Green;
             this.pictureBox8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox8.Location = new System.Drawing.Point(641, 635);
+            this.pictureBox8.Location = new System.Drawing.Point(563, 588);
             this.pictureBox8.Name = "pictureBox8";
             this.pictureBox8.Size = new System.Drawing.Size(18, 18);
             this.pictureBox8.TabIndex = 36;
@@ -522,9 +560,9 @@
             // BoxRouge
             // 
             this.BoxRouge.BackColor = System.Drawing.Color.White;
-            this.BoxRouge.Location = new System.Drawing.Point(6, 256);
+            this.BoxRouge.Location = new System.Drawing.Point(6, 220);
             this.BoxRouge.Name = "BoxRouge";
-            this.BoxRouge.Size = new System.Drawing.Size(653, 166);
+            this.BoxRouge.Size = new System.Drawing.Size(575, 166);
             this.BoxRouge.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxRouge.TabIndex = 31;
             this.BoxRouge.TabStop = false;
@@ -533,7 +571,7 @@
             // 
             this.pictureBox4.BackColor = System.Drawing.Color.White;
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox4.Location = new System.Drawing.Point(6, 428);
+            this.pictureBox4.Location = new System.Drawing.Point(6, 392);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(18, 18);
             this.pictureBox4.TabIndex = 32;
@@ -543,7 +581,7 @@
             // 
             this.pictureBox5.BackColor = System.Drawing.Color.Red;
             this.pictureBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox5.Location = new System.Drawing.Point(641, 428);
+            this.pictureBox5.Location = new System.Drawing.Point(563, 392);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(18, 18);
             this.pictureBox5.TabIndex = 33;
@@ -567,51 +605,74 @@
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(1395, 12);
+            this.groupBox1.Location = new System.Drawing.Point(1205, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(434, 199);
+            this.groupBox1.Size = new System.Drawing.Size(394, 199);
             this.groupBox1.TabIndex = 34;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paramètres de poinçonnage";
             // 
-            // VisualiserNoirEtBlanc
+            // VignetteImage
             // 
-            this.VisualiserNoirEtBlanc.Location = new System.Drawing.Point(1461, 264);
-            this.VisualiserNoirEtBlanc.Name = "VisualiserNoirEtBlanc";
-            this.VisualiserNoirEtBlanc.Size = new System.Drawing.Size(193, 23);
-            this.VisualiserNoirEtBlanc.TabIndex = 35;
-            this.VisualiserNoirEtBlanc.Text = "Visualiser l\'image en noir et blanc";
-            this.VisualiserNoirEtBlanc.UseVisualStyleBackColor = true;
-            this.VisualiserNoirEtBlanc.Click += new System.EventHandler(this.VisualiserNoirEtBlanc_Click);
+            this.VignetteImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.VignetteImage.Location = new System.Drawing.Point(6, 12);
+            this.VignetteImage.Name = "VignetteImage";
+            this.VignetteImage.Size = new System.Drawing.Size(600, 700);
+            this.VignetteImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.VignetteImage.TabIndex = 37;
+            this.VignetteImage.TabStop = false;
             // 
-            // MajLuminosité
+            // ControleVignette
             // 
-            this.MajLuminosité.Location = new System.Drawing.Point(1461, 235);
-            this.MajLuminosité.Name = "MajLuminosité";
-            this.MajLuminosité.Size = new System.Drawing.Size(193, 23);
-            this.MajLuminosité.TabIndex = 36;
-            this.MajLuminosité.Text = "Mettre à jour la luminosité";
-            this.MajLuminosité.UseVisualStyleBackColor = true;
+            this.ControleVignette.Controls.Add(this.MasquerVignette);
+            this.ControleVignette.Controls.Add(this.AfficherVignette);
+            this.ControleVignette.Location = new System.Drawing.Point(1284, 242);
+            this.ControleVignette.Name = "ControleVignette";
+            this.ControleVignette.Size = new System.Drawing.Size(116, 66);
+            this.ControleVignette.TabIndex = 38;
+            this.ControleVignette.TabStop = false;
+            this.ControleVignette.Text = "Vignette";
+            // 
+            // MasquerVignette
+            // 
+            this.MasquerVignette.AutoSize = true;
+            this.MasquerVignette.Location = new System.Drawing.Point(33, 43);
+            this.MasquerVignette.Name = "MasquerVignette";
+            this.MasquerVignette.Size = new System.Drawing.Size(66, 17);
+            this.MasquerVignette.TabIndex = 1;
+            this.MasquerVignette.Text = "Masquer";
+            this.MasquerVignette.UseVisualStyleBackColor = true;
+            this.MasquerVignette.CheckedChanged += new System.EventHandler(this.MasquerVignette_CheckedChanged);
+            // 
+            // AfficherVignette
+            // 
+            this.AfficherVignette.AutoSize = true;
+            this.AfficherVignette.Checked = true;
+            this.AfficherVignette.Location = new System.Drawing.Point(33, 19);
+            this.AfficherVignette.Name = "AfficherVignette";
+            this.AfficherVignette.Size = new System.Drawing.Size(61, 17);
+            this.AfficherVignette.TabIndex = 0;
+            this.AfficherVignette.TabStop = true;
+            this.AfficherVignette.Text = "Afficher";
+            this.AfficherVignette.UseVisualStyleBackColor = true;
+            this.AfficherVignette.CheckedChanged += new System.EventHandler(this.AfficherVignette_CheckedChanged);
             // 
             // Formulaire
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1841, 912);
-            this.Controls.Add(this.MajLuminosité);
-            this.Controls.Add(this.VisualiserNoirEtBlanc);
+            this.ClientSize = new System.Drawing.Size(1605, 912);
+            this.Controls.Add(this.ControleVignette);
+            this.Controls.Add(this.VignetteImage);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Couleur);
             this.Controls.Add(this.Fichiers);
-            this.Controls.Add(this.Reinitialiser);
             this.Controls.Add(this.VisualiserPoincons);
             this.Controls.Add(this.Lancer);
-            this.Controls.Add(this.VignetteImage);
             this.Name = "Formulaire";
             this.Text = "Poinçonner une image";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Formulaire_FormClosing);
             this.Load += new System.EventHandler(this.Formulaire_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BoxLuminosite)).EndInit();
@@ -630,13 +691,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).EndInit();
+            this.ControleVignette.ResumeLayout(false);
+            this.ControleVignette.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox VignetteImage;
         private System.Windows.Forms.OpenFileDialog OuvrirFichierImage;
         private System.Windows.Forms.TextBox CheminImage;
         private System.Windows.Forms.Button ChercherImage;
@@ -681,8 +744,14 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Button VisualiserNoirEtBlanc;
-        private System.Windows.Forms.Button MajLuminosité;
+        private System.Windows.Forms.PictureBox VignetteImage;
+        private System.Windows.Forms.Button AppliquerBleu;
+        private System.Windows.Forms.Button AppliquerVert;
+        private System.Windows.Forms.Button AppliquerRouge;
+        private System.Windows.Forms.Button AppliquerLuminosite;
+        private System.Windows.Forms.GroupBox ControleVignette;
+        private System.Windows.Forms.RadioButton MasquerVignette;
+        private System.Windows.Forms.RadioButton AfficherVignette;
     }
 }
 

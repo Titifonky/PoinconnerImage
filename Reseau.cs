@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Diagnostics;
+using NsEditerImage;
 
-namespace PoinconnerImage
+namespace NsReseau
 {
     public enum TypeReseau_e
     {
@@ -15,9 +16,9 @@ namespace PoinconnerImage
 
     public static class Reseau
     {
-        public static List<Point> ListePointsReseau(Size Dimensions, Double Diametre, TypeReseau_e TypeReseau)
+        public static List<MathPoint> ListePointsReseau(Size Dimensions, Double Diametre, TypeReseau_e TypeReseau)
         {
-            List<Point> pListePoints = new List<Point>();
+            List<MathPoint> pListePoints = new List<MathPoint>();
             int pNbH;
             int pNbV;
             Double pDimH = Diametre;
@@ -35,7 +36,7 @@ namespace PoinconnerImage
 
                     for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
-                            Point pPt;
+                            MathPoint pPt;
                             pPt.X = pDecalH + (x * pDimH);
                             pPt.Y = pDecalV + (y * pDimV);
                             pListePoints.Add(pPt);
@@ -53,7 +54,7 @@ namespace PoinconnerImage
 
                     for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
-                            Point pPt = new Point();
+                            MathPoint pPt = new MathPoint();
                             if ((y % 2) == 0)
                             {
                                 
@@ -75,9 +76,9 @@ namespace PoinconnerImage
             return pListePoints;
         }
 
-        public static List<Vecteur> ListVecteursMatrice(Double Diametre, Double Pas, TypeReseau_e TypeReseau)
+        public static List<MathVecteur> ListVecteursMatrice(Double Diametre, Double Pas, TypeReseau_e TypeReseau)
         {
-            List<Point> pListePoints = new List<Point>();
+            List<MathPoint> pListePoints = new List<MathPoint>();
 
             int pNbH;
             int pNbV;
@@ -91,14 +92,14 @@ namespace PoinconnerImage
             pDecalH = (pDimH - (pNbH * Pas)) * 0.5;
             pDecalV = (pDimV - (pNbV * Pas)) * 0.5;
 
-            Point PtCentre = new Point(pDimH * 0.5, pDimV * 0.5);
+            MathPoint PtCentre = new MathPoint(pDimH * 0.5, pDimV * 0.5);
 
             switch (TypeReseau)
             {
                 case TypeReseau_e.Carre:
                     for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
-                            Point pPt;
+                            MathPoint pPt;
                             pPt.X = pDecalH + (x * Pas);
                             pPt.Y = pDecalV + (y * Pas);
                             pListePoints.Add(pPt);
@@ -107,22 +108,22 @@ namespace PoinconnerImage
 
                 case TypeReseau_e.Hexagonal:
                     Double pCoteV = (pDimV / Math.Cos(Math.PI / 12.0));
-                    Point Pt1 = new Point(0.0, pCoteV / 4.0);
-                    Point Pt2 = new Point(pDimH * 0.5, 0.0);
-                    Point Pt3 = new Point(pDimH, pCoteV / 4.0);
-                    Point Pt4 = new Point(pDimH, pCoteV * 3.0 / 4.0);
-                    Point Pt5 = new Point(pDimH * 0.5, pCoteV);
-                    Point Pt6 = new Point(0.0, pCoteV * 3.0 / 4.0);
+                    MathPoint Pt1 = new MathPoint(0.0, pCoteV / 4.0);
+                    MathPoint Pt2 = new MathPoint(pDimH * 0.5, 0.0);
+                    MathPoint Pt3 = new MathPoint(pDimH, pCoteV / 4.0);
+                    MathPoint Pt4 = new MathPoint(pDimH, pCoteV * 3.0 / 4.0);
+                    MathPoint Pt5 = new MathPoint(pDimH * 0.5, pCoteV);
+                    MathPoint Pt6 = new MathPoint(0.0, pCoteV * 3.0 / 4.0);
                     PtCentre.Y = pCoteV * 0.5;
 
                     for (int y = 0; y <= pNbV; y++) for (int x = 0; x <= pNbH; x++)
                         {
-                            Point pPt;
+                            MathPoint pPt;
                             pPt.X = pDecalH + (x * Pas);
                             pPt.Y = pDecalV + (y * Pas);
 
                             Boolean T = true;
-                            Point PtTest = pPt;
+                            MathPoint PtTest = pPt;
 
                             T = T & SensHoraire(Pt1, Pt2, PtTest);
                             T = T & SensHoraire(Pt2, Pt3, PtTest);
@@ -135,18 +136,18 @@ namespace PoinconnerImage
                     break;
             }
 
-            List<Vecteur> pListeVecteurs = new List<Vecteur>();
+            List<MathVecteur> pListeVecteurs = new List<MathVecteur>();
 
-            foreach (Point Pt in pListePoints)
+            foreach (MathPoint Pt in pListePoints)
             {
-                Vecteur pV = new Vecteur(PtCentre, Pt);
+                MathVecteur pV = new MathVecteur(PtCentre, Pt);
                 pListeVecteurs.Add(pV);
             }
 
             return pListeVecteurs;
         }
 
-        private static void Rotation90(Point Centre, ref Point Pt)
+        private static void Rotation90(MathPoint Centre, ref MathPoint Pt)
         {
             Pt.X -= Centre.X;
             Pt.Y -= Centre.Y;
@@ -156,7 +157,7 @@ namespace PoinconnerImage
             Pt.Y = X + Centre.Y;
         }
 
-        private static void Symetrique(Point Centre, ref Point Pt, Boolean Verticale = true)
+        private static void Symetrique(MathPoint Centre, ref MathPoint Pt, Boolean Verticale = true)
         {
             if (Verticale)
                 Pt.X = Centre.X + (Centre.X - Pt.X);
@@ -164,7 +165,7 @@ namespace PoinconnerImage
                 Pt.Y = Centre.Y + (Centre.Y - Pt.Y);
         }
 
-        private static Boolean SensHoraire(Point Dep, Point Arr, Point Pt)
+        private static Boolean SensHoraire(MathPoint Dep, MathPoint Arr, MathPoint Pt)
         {
             Boolean T = false;
 

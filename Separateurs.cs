@@ -192,7 +192,7 @@ namespace NsPlages
 
     }
 
-    private class Separateur
+    public class Separateur
     {
         public int No { get { return _No; } }
         public int Tolerance { get; set; }
@@ -330,7 +330,7 @@ namespace NsPlages
         }
     }
 
-    private class Texte
+    public class Texte
     {
         public String Nom { get { return _Nom; } set { _Nom = value; } }
         public float Taille { set { _Police = new Font("Arial", value); ; } }

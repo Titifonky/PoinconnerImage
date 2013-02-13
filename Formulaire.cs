@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using NsPlages;
 using NsEditerImage;
 using System.Diagnostics;
+using NsReseau;
 
 namespace PoinconnerImage
 {
@@ -20,6 +21,7 @@ namespace PoinconnerImage
         private Plages _SepVert;
         private Plages _SepBleu;
         private EditerImage _Editeur;
+        private Boolean _VisualiserPoincons = false;
 
         public Formulaire()
         {
@@ -135,29 +137,13 @@ namespace PoinconnerImage
 
         }
 
-        private void VisualiserZones_Click(object sender, EventArgs e)
+        private void VisualiserPoincons_Click(object sender, EventArgs e)
         {
             VignetteImage.Refresh();
 
-            Double DiamMax = 0;
-            foreach (String S in ListePoincons.Text.Split(' '))
-            {
-                if (!String.IsNullOrEmpty(S))
-                {
-                    if (Convert.ToDouble(S) > DiamMax)
-                        DiamMax = Convert.ToDouble(S);
-                }
-
-            }
-
-            DiamMax += Convert.ToDouble(Jeu.Text);
-
-            int pLgImage = Convert.ToInt32(LargeurImage.Text);
-            int pHtImage = Convert.ToInt32(HauteurImage.Text);
-            int pLgBmp = VignetteImage.Image.Size.Width;
-            int pHtBmp = VignetteImage.Image.Size.Height;
-            int pDecalX = (int)Math.Truncate((VignetteImage.Width - pLgBmp) * 0.5);
-            int pDecalY = (int)Math.Truncate((VignetteImage.Height - pHtBmp) * 0.5);
+            Size DimTole = new Size(Convert.ToInt32(LargeurImage.Text), Convert.ToInt32(HauteurImage.Text));
+            int pDecalX = (int)Math.Truncate((VignetteImage.Width - _Editeur.Image.Size.Width) * 0.5);
+            int pDecalY = (int)Math.Truncate((VignetteImage.Height - _Editeur.Image.Size.Height) * 0.5);
 
             TypeReseau_e TypeReseau = TypeReseau_e.Carre;
 
@@ -171,52 +157,21 @@ namespace PoinconnerImage
                     break;
             }
 
-            Double MmParPx = pLgImage / Convert.ToDouble(pLgBmp);
-            Double PxParMm = Convert.ToDouble(pLgBmp) / pLgImage;
-
-            Size pDimTole = new System.Drawing.Size(pLgImage, pHtImage);
-            List<Point> pListePointsReseau = Reseau.ListePointsReseau(pDimTole, DiamMax, TypeReseau);
-            List<Vecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
-            List<Plage> pListePoincons = _SepLuminosite.ListePlages();
+            Double MmParPx = DimTole.Width / Convert.ToDouble(_Editeur.Image.Size.Width);
+            Double PxParMm = 1.0 / MmParPx;
 
             Graphics pGraph = VignetteImage.CreateGraphics();
 
-            _Editeur.Verrouiller();
-
-            foreach (Point Pt in pListePointsReseau)
+            foreach (Poincon pPc in _Editeur.ListePoincons(_SepLuminosite.ListePlages(), Convert.ToDouble(Jeu.Text), DimTole, TypeReseau))
             {
-                float Val = 0;
-
-                foreach (Vecteur V in pListePointsMatrice)
-                {
-                    Point PtTmp = Pt;
-                    PtTmp.Deplacer(V);
-                    Color C = _Editeur.GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
-                    Val += C.GetBrightness();
-                }
-
-                Val /= pListePointsMatrice.Count;
-
-                Double Diam = 0;
-
-                foreach (Plage Pc in pListePoincons)
-                {
-                    if ((Val > Pc.Min) && (Val <= Pc.Max))
-                    {
-                        Diam = Pc.Intitule;
-                        break;
-                    }
-                }
-
-                int pX = (int)Math.Truncate(pDecalX + Pt.X * PxParMm - Diam * 0.5 * PxParMm);
-                int pY = (int)Math.Truncate(pDecalY + Pt.Y * PxParMm - Diam * 0.5 * PxParMm);
-
-                pGraph.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(Diam * PxParMm), (int)Math.Truncate(Diam * PxParMm));
+                int pX = (int)Math.Truncate(pDecalX + pPc.Point.X * PxParMm - pPc.Diametre * 0.5 * PxParMm);
+                int pY = (int)Math.Truncate(pDecalY + pPc.Point.Y * PxParMm - pPc.Diametre * 0.5 * PxParMm);
+                pGraph.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(pPc.Diametre * PxParMm), (int)Math.Truncate(pPc.Diametre * PxParMm));
             }
 
-            _Editeur.Liberer();
-
             pGraph.Dispose();
+
+            _VisualiserPoincons = true;
 
         }
         private void VisualiserNoirEtBlanc_Click(object sender, EventArgs e)
@@ -235,6 +190,7 @@ namespace PoinconnerImage
         private void Reinitialiser_Click(object sender, EventArgs e)
         {
             VignetteImage.Refresh();
+            _VisualiserPoincons = false;
         }
 
         private void Jeu_TextChanged(object sender, EventArgs e)
@@ -285,6 +241,31 @@ namespace PoinconnerImage
             Valider();
         }
 
+        private void AfficherVignette_CheckedChanged(object sender, EventArgs e)
+        {
+            GestionAffichageVignette();
+        }
+
+        private void MasquerVignette_CheckedChanged(object sender, EventArgs e)
+        {
+            GestionAffichageVignette();
+        }
+
+        private void GestionAffichageVignette()
+        {
+            if (AfficherVignette.Checked == true)
+            {
+                VignetteImage.Image = _Editeur.Image;
+            }
+            else
+            {
+                VignetteImage.Image = null;
+            }
+
+            if (_VisualiserPoincons)
+                VisualiserPoincons_Click(null, null);
+        }
+
         private void Valider()
         {
             Boolean T = true;
@@ -319,8 +300,6 @@ namespace PoinconnerImage
             Lancer.Enabled = true;
         }
 
-
-
         private bool ContientQueDesChiffres(string S)
         {
             bool Test = true;
@@ -334,8 +313,6 @@ namespace PoinconnerImage
 
             return Test;
         }
-
         
-
     }
 }
