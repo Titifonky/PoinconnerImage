@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using NsPlages;
+using DXFLibrary;
 using NsEditerImage;
-using System.Diagnostics;
+using NsPlages;
 using NsReseau;
 
 namespace PoinconnerImage
 {
     public partial class Formulaire : Form
     {
-        private Bitmap pImage;
-        private Poinconneuse Poinconner = new Poinconneuse();
-        private NameValueCollection Data = new NameValueCollection();
         private Plages _SepLuminosite;
-        private Plages _SepRouge;
-        private Plages _SepVert;
-        private Plages _SepBleu;
         private EditerImage _Editeur;
-        private Boolean _VisualiserPoincons = false;
+        private Image _ImagePoincons;
+        private Boolean _NoirEtBlanc = false;
 
         public Formulaire()
         {
@@ -30,21 +24,22 @@ namespace PoinconnerImage
 
         private void Formulaire_Load(object sender, EventArgs e)
         {
-            TypeCarroyage.SetSelected(0, true);
             Lancer.Enabled = false;
             Jeu.Text = "2";
-            _SepLuminosite = new Plages(BoxLuminosite, 1);
-            _SepRouge = new Plages(BoxRouge, 255);
-            _SepVert = new Plages(BoxVert, 255);
-            _SepBleu = new Plages(BoxBleu, 255);
-        }
+            TypeCarroyage.SelectedIndex = 1;
 
-        private void Formulaire_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            pImage = null;
-            Poinconner = null;
-            Data = null;
-            this.Dispose(true);
+            Rouge.Text = "0.2126";
+            Vert.Text = "0.7152";
+            Bleu.Text = "0.0722";
+
+            Somme.Text = "1";
+
+            // Pour gerer la transparence de l'aperçu des poincons, on met VignettePoincons dans VignetteImage,
+            // comme ca, les poincons sont au dessus.
+            VignettePoincons.Parent = VignetteImage;
+            // Et on repositionne par rapport au parent
+            VignettePoincons.Location = new Point(0, 0);
+
         }
 
         private void ChercherImage_Click(object sender, EventArgs e)
@@ -59,41 +54,26 @@ namespace PoinconnerImage
         {
             if (File.Exists(CheminImage.Text))
             {
-                pImage = new Bitmap(CheminImage.Text);
+                _Editeur = new EditerImage(CheminImage.Text);
 
-                _Editeur = new EditerImage(pImage);
-
-                if ((pImage.Width > VignetteImage.Width) || (pImage.Height > VignetteImage.Height))
+                if ((_Editeur.Image.Width > VignetteImage.Width) || (_Editeur.Image.Height > VignetteImage.Height))
                     _Editeur.Redimensionner(VignetteImage.Size);
 
                 VignetteImage.Image = _Editeur.Image;
+                VignettePoincons.Image = null;
 
-                Size pSize = BoxLuminosite.Size;
-                pSize.Width -= 20;
+                HauteurImage.Text = "";
+                LargeurImage.Text = "";
 
-                _SepLuminosite.LgHistogramme = pSize.Width;
-                _SepRouge.LgHistogramme = pSize.Width;
-                _SepVert.LgHistogramme = pSize.Width;
-                _SepBleu.LgHistogramme = pSize.Width;
+                if (_SepLuminosite == null)
+                    _SepLuminosite = new Plages(BoxLuminosite, _Editeur.PlageCouleur);
+                else
+                    _SepLuminosite.Supprimer();
 
-                BoxLuminosite.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Luminosite);
-                BoxRouge.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Rouge);
-                BoxVert.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Vert);
-                BoxBleu.Image = (Image)_Editeur.Histogramme(pSize, Canal_e.Bleu);
-
-                List<string> pListe = new List<string>();
-                pListe.Add(" ");
-
-                _SepLuminosite.Supprimer();
-                _SepRouge.Supprimer();
-                _SepRouge.Intitules(pListe);
-                _SepVert.Supprimer();
-                _SepVert.Intitules(pListe);
-                _SepBleu.Supprimer();
-                _SepBleu.Intitules(pListe);
+                MettreAJourHistogramme();
             }
 
-            Valider();
+            ValiderDXF();
         }
 
         private void ChercherDXF_Click(object sender, EventArgs e)
@@ -112,7 +92,7 @@ namespace PoinconnerImage
                 CheminDossier.Text = "";
             }
 
-            Valider();
+            ValiderDXF();
         }
 
         private void ListePoincons_TextChanged(object sender, EventArgs e)
@@ -120,9 +100,8 @@ namespace PoinconnerImage
             if (!ContientQueDesChiffres(ListePoincons.Text))
                 ListePoincons.Text = "";
 
-            Valider();
+            ValiderDXF();
         }
-
 
         private void ValiderPoincon_Click(object sender, EventArgs e)
         {
@@ -133,7 +112,8 @@ namespace PoinconnerImage
                     pListePoincons.Add(S);
             }
 
-            _SepLuminosite.Intitules(pListePoincons);
+            if (_SepLuminosite != null)
+                _SepLuminosite.Intitules(pListePoincons);
 
         }
 
@@ -141,56 +121,37 @@ namespace PoinconnerImage
         {
             VignetteImage.Refresh();
 
+            if (String.IsNullOrWhiteSpace(LargeurImage.Text) || String.IsNullOrWhiteSpace(HauteurImage.Text))
+                return;
+
             Size DimTole = new Size(Convert.ToInt32(LargeurImage.Text), Convert.ToInt32(HauteurImage.Text));
-            int pDecalX = (int)Math.Truncate((VignetteImage.Width - _Editeur.Image.Size.Width) * 0.5);
-            int pDecalY = (int)Math.Truncate((VignetteImage.Height - _Editeur.Image.Size.Height) * 0.5);
-
-            TypeReseau_e TypeReseau = TypeReseau_e.Carre;
-
-            switch ((String)TypeCarroyage.SelectedItem)
-            {
-                case "Carré":
-                    TypeReseau = TypeReseau_e.Carre;
-                    break;
-                case "Hexagonal":
-                    TypeReseau = TypeReseau_e.Hexagonal;
-                    break;
-            }
+            int pDecalX = (int)Math.Truncate((VignettePoincons.Width - _Editeur.Image.Size.Width) * 0.5);
+            int pDecalY = (int)Math.Truncate((VignettePoincons.Height - _Editeur.Image.Size.Height) * 0.5);
 
             Double MmParPx = DimTole.Width / Convert.ToDouble(_Editeur.Image.Size.Width);
             Double PxParMm = 1.0 / MmParPx;
 
-            Graphics pGraph = VignetteImage.CreateGraphics();
+            _ImagePoincons = new Bitmap(VignettePoincons.Width, VignettePoincons.Height);
+            Graphics pGraphic = Graphics.FromImage(_ImagePoincons);
 
-            foreach (Poincon pPc in _Editeur.ListePoincons(_SepLuminosite.ListePlages(), Convert.ToDouble(Jeu.Text), DimTole, TypeReseau))
+            List<Poincon> pListePoincons = _Editeur.ListePoincons(_SepLuminosite.ListePlages(), Convert.ToDouble(Jeu.Text), DimTole, TypeReseau());
+
+            foreach (Poincon pPc in pListePoincons)
             {
                 int pX = (int)Math.Truncate(pDecalX + pPc.Point.X * PxParMm - pPc.Diametre * 0.5 * PxParMm);
                 int pY = (int)Math.Truncate(pDecalY + pPc.Point.Y * PxParMm - pPc.Diametre * 0.5 * PxParMm);
-                pGraph.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(pPc.Diametre * PxParMm), (int)Math.Truncate(pPc.Diametre * PxParMm));
+                pGraphic.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(pPc.Diametre * PxParMm), (int)Math.Truncate(pPc.Diametre * PxParMm));
             }
 
-            pGraph.Dispose();
+            pGraphic.Dispose();
 
-            _VisualiserPoincons = true;
+            VignettePoincons.Image = _ImagePoincons;
 
         }
-        private void VisualiserNoirEtBlanc_Click(object sender, EventArgs e)
+
+        private void MasquerPoincons_Click(object sender, EventArgs e)
         {
-            Bitmap pBitmap = new Bitmap(_Editeur.Image);
-            EditerImage pEditeur = new EditerImage((Image)pBitmap);
-
-            List<Plage> pListePlages = _SepLuminosite.ListePlages();
-
-
-
-            //Color C = _Editeur.GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
-        }
-
-
-        private void Reinitialiser_Click(object sender, EventArgs e)
-        {
-            VignetteImage.Refresh();
-            _VisualiserPoincons = false;
+            VignettePoincons.Image = null;
         }
 
         private void Jeu_TextChanged(object sender, EventArgs e)
@@ -198,10 +159,10 @@ namespace PoinconnerImage
             Double Nb;
             if (!Double.TryParse(Jeu.Text, out Nb))
             {
-                Jeu.Text = "";
+                Jeu.Text = "0";
             }
 
-            Valider();
+            ValiderDXF();
         }
 
         private void LargeurImage_TextChanged(object sender, EventArgs e)
@@ -209,15 +170,15 @@ namespace PoinconnerImage
             if (LargeurImage.Focused)
             {
                 Int32 Nb;
-                if (Int32.TryParse(LargeurImage.Text, out Nb) && (pImage != null))
+                if (Int32.TryParse(LargeurImage.Text, out Nb) && (_Editeur != null))
                 {
-                    HauteurImage.Text = Convert.ToString((int)(Nb * pImage.Height / pImage.Width));
+                    HauteurImage.Text = Convert.ToString((int)(Nb * _Editeur.Image.Height / _Editeur.Image.Width));
                 }
                 else
                     LargeurImage.Text = "";
             }
 
-            Valider();
+            ValiderDXF();
         }
 
         private void HauteurImage_TextChanged(object sender, EventArgs e)
@@ -225,20 +186,20 @@ namespace PoinconnerImage
             if (HauteurImage.Focused)
             {
                 Int32 Nb;
-                if (Int32.TryParse(HauteurImage.Text, out Nb) && (pImage != null))
+                if (Int32.TryParse(HauteurImage.Text, out Nb) && (_Editeur != null))
                 {
-                    LargeurImage.Text = Convert.ToString((int)(Nb * pImage.Width / pImage.Height));
+                    LargeurImage.Text = Convert.ToString((int)(Nb * _Editeur.Image.Width / _Editeur.Image.Height));
                 }
                 else
                     HauteurImage.Text = "";
             }
 
-            Valider();
+            ValiderDXF();
         }
 
         private void TypeCarroyage_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Valider();
+            ValiderDXF();
         }
 
         private void AfficherVignette_CheckedChanged(object sender, EventArgs e)
@@ -253,7 +214,7 @@ namespace PoinconnerImage
 
         private void GestionAffichageVignette()
         {
-            if (AfficherVignette.Checked == true)
+            if ((AfficherVignette.Checked == true) && (_Editeur != null))
             {
                 VignetteImage.Image = _Editeur.Image;
             }
@@ -261,12 +222,168 @@ namespace PoinconnerImage
             {
                 VignetteImage.Image = null;
             }
-
-            if (_VisualiserPoincons)
-                VisualiserPoincons_Click(null, null);
         }
 
-        private void Valider()
+        private void Lancer_Click(object sender, EventArgs e)
+        {
+            EditerImage pEditeur = new EditerImage(CheminImage.Text);
+
+            Lancer.Enabled = false;
+
+            Size DimTole = new Size(Convert.ToInt32(LargeurImage.Text), Convert.ToInt32(HauteurImage.Text));
+
+            pEditeur.Redimensionner(DimTole);
+
+            if (_NoirEtBlanc)
+                pEditeur.NoirEtBlanc();
+
+            List<Poincon> pListePoincons = pEditeur.ListePoincons(_SepLuminosite.ListePlages(), Convert.ToDouble(Jeu.Text), DimTole, TypeReseau());
+
+            Document DocumentDXF = new Document();
+
+            Tables Tables = new Tables();
+            DocumentDXF.SetTables(Tables);
+
+            Table Calques = new Table("LAYER");
+            Tables.addTable(Calques);
+
+            foreach (Poincon pPc in pListePoincons)
+            {
+                Circle Cercle = new Circle(pPc.Point.X, pPc.Point.Y * -1, pPc.Diametre * 0.5, "0");
+                DocumentDXF.add(Cercle);
+            }
+
+
+            int No = 1;
+
+            String pCheminDeBaseFichierDXF = CheminDossier.Text + "\\" + Path.GetFileNameWithoutExtension(CheminImage.Text) + "_";
+            String pCheminFichierDXF = pCheminDeBaseFichierDXF + No + ".dxf";
+
+            while (File.Exists(pCheminFichierDXF))
+            {
+                No++;
+                pCheminFichierDXF = pCheminDeBaseFichierDXF + No + ".dxf";
+            }
+
+            FileStream Fichier = new FileStream(pCheminFichierDXF, System.IO.FileMode.Create);
+            Writer.Write(DocumentDXF, Fichier);
+            Fichier.Close();
+
+            Lancer.Enabled = true;
+        }
+
+        private void NoirEtBlanc_Click(object sender, EventArgs e)
+        {
+            if (_Editeur != null)
+            {
+                _Editeur.NoirEtBlanc(Convert.ToSingle(Rouge.Text), Convert.ToSingle(Vert.Text), Convert.ToSingle(Bleu.Text));
+                VignetteImage.Refresh();
+                MettreAJourHistogramme();
+                _NoirEtBlanc = true;
+            }
+        }
+
+        private void Rouge_TextChanged(object sender, EventArgs e)
+        {
+            Double Nb;
+
+            Rouge.Text = Rouge.Text.Replace('.', ',');
+
+            if (!Double.TryParse(Rouge.Text, out Nb))
+            {
+                Rouge.Text = "0";
+            }
+
+            SommeNoirEtBlanc();
+        }
+
+        private void Vert_TextChanged(object sender, EventArgs e)
+        {
+            Double Nb;
+
+            Vert.Text = Vert.Text.Replace('.', ',');
+
+            if (!Double.TryParse(Vert.Text, out Nb))
+            {
+                Vert.Text = "0";
+            }
+
+            SommeNoirEtBlanc();
+        }
+
+        private void Bleu_TextChanged(object sender, EventArgs e)
+        {
+            Double Nb;
+
+            Bleu.Text = Bleu.Text.Replace('.', ',');
+
+            if (!Double.TryParse(Bleu.Text, out Nb))
+            {
+                Bleu.Text = "0";
+            }
+
+            SommeNoirEtBlanc();
+        }
+
+        private void RestaurerCouleur_Click(object sender, EventArgs e)
+        {
+            if (_Editeur != null)
+            {
+                _Editeur.ReinitialiserImage();
+                VignetteImage.Image = _Editeur.Image;
+                VignetteImage.Refresh();
+                MettreAJourHistogramme();
+                _NoirEtBlanc = false;
+            }
+        }
+
+        private Image ConvertirHistogrammeEnImage(int[] Histogramme, Size Dim)
+        {
+            int pMax = 1;
+            for (int i = 0; i < Histogramme.Length; i++)
+            {
+                if (Histogramme[i] > pMax)
+                    pMax = Histogramme[i];
+            }
+
+            int pBoxWidth = Dim.Width;
+            int pBoxHeight = Dim.Height;
+
+            Point[] Points = new Point[Histogramme.Length + 1];
+            Points[0].X = 0;
+            Points[0].Y = pBoxHeight;
+
+            for (int i = 0; i < Histogramme.Length; i++)
+            {
+                Points[i + 1].X = Convert.ToInt32((i * (pBoxWidth - 2) / Histogramme.Length) + 1);
+                Points[i + 1].Y = Convert.ToInt32((pBoxHeight - 1) - ((Convert.ToDouble(Histogramme[Histogramme.GetUpperBound(0) - i]) * (pBoxHeight - 5)) / pMax));
+            }
+
+            Points[Histogramme.Length].X = pBoxWidth - 1;
+            Points[Histogramme.Length].Y = pBoxHeight;
+
+            Bitmap Image_Histogram = new Bitmap(pBoxWidth, pBoxHeight);
+
+
+            Graphics Graphic_Histogram = Graphics.FromImage(Image_Histogram);
+            Pen Pen = new Pen(Color.Black);
+            Pen.Brush = new SolidBrush(Color.Black);
+            Graphic_Histogram.FillPolygon(Pen.Brush, Points);
+            Graphic_Histogram.Dispose();
+
+            return (Image)Image_Histogram;
+        }
+
+        private void MettreAJourHistogramme()
+        {
+            Size pSize = BoxLuminosite.Size;
+            pSize.Width -= 20;
+            _SepLuminosite.LgHistogramme = pSize.Width;
+            Image pImage = ConvertirHistogrammeEnImage(_Editeur.Histogramme(Canal_e.Luminosite), pSize);
+            BoxLuminosite.Image = ConvertirHistogrammeEnImage(_Editeur.Histogramme(Canal_e.Luminosite), pSize);
+        }
+
+        private void ValiderDXF()
         {
             Boolean T = true;
 
@@ -283,23 +400,6 @@ namespace PoinconnerImage
             Lancer.Enabled = T;
         }
 
-        private void Lancer_Click(object sender, EventArgs e)
-        {
-            Lancer.Enabled = false;
-            Data.Clear();
-            Data.Add("CheminFichierImage", CheminImage.Text);
-            Data.Add("CheminDossierExport", CheminDossier.Text);
-            Data.Add("Jeu", Jeu.Text);
-            Data.Add("ListePoincons", ListePoincons.Text);
-            Data.Add("LargeurImage", LargeurImage.Text);
-            Data.Add("HauteurImage", HauteurImage.Text);
-            Data.Add("TypeCarroyage", (String)TypeCarroyage.SelectedItem);
-
-            Poinconner.Go(Data);
-
-            Lancer.Enabled = true;
-        }
-
         private bool ContientQueDesChiffres(string S)
         {
             bool Test = true;
@@ -313,6 +413,40 @@ namespace PoinconnerImage
 
             return Test;
         }
-        
+
+        private TypeReseau_e TypeReseau()
+        {
+            TypeReseau_e pTypeReseau = TypeReseau_e.Carre;
+
+            switch ((String)TypeCarroyage.SelectedItem)
+            {
+                case "Carré":
+                    pTypeReseau = TypeReseau_e.Carre;
+                    break;
+                case "Hexagonal":
+                    pTypeReseau = TypeReseau_e.Hexagonal;
+                    break;
+            }
+
+            return pTypeReseau;
+        }
+
+        private void SommeNoirEtBlanc()
+        {
+            Double R = 0; Double V = 0; Double B = 0;
+
+            if (!String.IsNullOrWhiteSpace(Rouge.Text))
+                R = Convert.ToDouble(Rouge.Text);
+
+            if (!String.IsNullOrWhiteSpace(Vert.Text))
+                V = Convert.ToDouble(Vert.Text);
+
+            if (!String.IsNullOrWhiteSpace(Bleu.Text))
+                B = Convert.ToDouble(Bleu.Text);
+
+            Somme.Text = Convert.ToString(R + V + B);
+
+        }
+
     }
 }

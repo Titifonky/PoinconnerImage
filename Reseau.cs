@@ -45,7 +45,7 @@ namespace NsReseau
                     break;
 
                 case TypeReseau_e.Hexagonal:
-                    pDimV = (Diametre / Math.Cos(Math.PI / 12.0));
+                    pDimV = (Diametre / Math.Cos(Math.PI / 6.0));
                     Double pDistV = pDimV * 3.0 / 4.0;
                     pNbH = (int)Math.Truncate((Dimensions.Width - pDimH) / pDimH);
                     pNbV = (int)Math.Truncate((Dimensions.Height - pDimV) / pDistV);
@@ -107,7 +107,7 @@ namespace NsReseau
                     break;
 
                 case TypeReseau_e.Hexagonal:
-                    Double pCoteV = (pDimV / Math.Cos(Math.PI / 12.0));
+                    Double pCoteV = (pDimV / Math.Cos(Math.PI / 6.0));
                     MathPoint Pt1 = new MathPoint(0.0, pCoteV / 4.0);
                     MathPoint Pt2 = new MathPoint(pDimH * 0.5, 0.0);
                     MathPoint Pt3 = new MathPoint(pDimH, pCoteV / 4.0);

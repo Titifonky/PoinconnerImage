@@ -183,7 +183,12 @@ namespace NsPlages
                 if (pMin < 0)
                     pMin = 0;
 
-                Plage pPc = new Plage(Convert.ToDouble(pTxt.Nom), pMin, pMax);
+                String pNom = pTxt.Nom;
+
+                if (String.IsNullOrWhiteSpace(pNom))
+                    pNom = "0";
+
+                Plage pPc = new Plage(Convert.ToDouble(pNom), pMin, pMax);
                 pListePoincons.Add(pPc);
             }
 

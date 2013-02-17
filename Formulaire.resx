@@ -123,4 +123,15 @@
   <metadata name="OuvrirDossierExport.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>163, 17</value>
   </metadata>
+  <data name="label15.Text" xml:space="preserve">
+    <value>La répartition des poincons se fait en fonction de la luminosité de l'image. Pour bien visualiser les zones de poinçonnage, il faut idéalement travailler avec une image en noir et blanc.
+
+1. Indiquez les différents diamètres de poinçons en les séparants par un espace puis validez
+2. Definissez le jeu minimum entre deux poincons
+3. Choisissez le type de réseau : carré ou hexagonal. Le réseau héxagonal permet une plus grande définition mais augmente le nombre de poinçons.
+4. Vous pouvez ensuite repartir les poinçons sur l'histogramme de luminosité en déplacant les barres rouges. Cela permet d'afiner les détails
+5. Visualisez un apperçu des poinçons sur l'image
+
+Pour avoir un meilleur visuel, vous pouvez masquer l'image en arrière-plan</value>
+  </data>
 </root>

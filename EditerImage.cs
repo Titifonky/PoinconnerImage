@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Collections.Generic;
 using NsPlages;
 using NsReseau;
 
@@ -14,9 +14,10 @@ namespace NsEditerImage
         Rouge = 1,
         Vert = 2,
         Bleu = 4,
-        Teinte = 8,
-        Saturation = 16,
-        Luminosite = 32
+        Alpha = 8,
+        Teinte = 16,
+        Saturation = 32,
+        Luminosite = 64
     }
 
     public struct Poincon
@@ -58,44 +59,53 @@ namespace NsEditerImage
 
     public class EditerImage
     {
-        Image _Source = null;
-        Bitmap _Bmp = null;
-        BitmapData _BmpData = null;
-        Boolean _Optimiser = false;
-        Boolean _Verrouiller = false;
+        private Image _Source = null;
+        private Image _Image = null;
+        private Bitmap _Bmp = null;
+        private BitmapData _BmpData = null;
+        private Boolean _Optimiser = false;
+        private Boolean _Verrouiller = false;
+        int _PlageCouleur = 255;
 
-        public Image Image { get { return _Source; } }
-        public Bitmap Bitmap { get { return _Bmp; } }
+        private int[] _HistRouge = null;
+        private int[] _HistVert = null;
+        private int[] _HistBleu = null;
+        private int[] _HistAlpha = null;
+        private int[] _HistTeinte = null;
+        private int[] _HistSaturation = null;
+        private int[] _HistLuminosite = null;
+
+        public Image Original { get { return _Source; } }
+        public Image Image { get { return _Image; } }
         public int Depth { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
         public bool Optimiser { get { return _Optimiser; } }
+        public int PlageCouleur { get { return _PlageCouleur; } }
 
-        private int[] _HistRouge;
-        private int[] _HistVert;
-        private int[] _HistBleu;
-        private int[] _HistTeinte;
-        private int[] _HistSaturation;
-        private int[] _HistLuminosite;
-
-        public EditerImage(Image Source)
+        public EditerImage(String Chemin)
         {
-            Init(Source);
+            _Source = Image.FromFile(Chemin);
+
+            _Image = (Image)_Source.Clone();
+
+            Init();
         }
 
-        private void Init(Image Source)
+        ~EditerImage()
         {
             Liberer();
+        }
 
-            _Source = Source;
-            _Bmp = _Source as Bitmap;
+        private void Init()
+        {
 
             // Get width and height of bitmap
-            Width = _Bmp.Width;
-            Height = _Bmp.Height;
+            Width = _Image.Width;
+            Height = _Image.Height;
 
             // get source bitmap pixel format size
-            Depth = System.Drawing.Bitmap.GetPixelFormatSize(_Bmp.PixelFormat);
+            Depth = System.Drawing.Bitmap.GetPixelFormatSize(_Image.PixelFormat);
 
             // Check if bpp (Bits Per Pixel) is 8, 24, or 32
             if (Depth == 8 || Depth == 24 || Depth == 32)
@@ -105,17 +115,7 @@ namespace NsEditerImage
             else
                 _Optimiser = false;
 
-            _HistRouge = null;
-            _HistVert = null;
-            _HistBleu = null;
-            _HistTeinte = null;
-            _HistSaturation = null;
-            _HistLuminosite = null;
-        }
-
-        ~EditerImage()
-        {
-            Liberer();
+            ReinitialiserHistogrammes();
         }
 
         /// <summary>
@@ -125,12 +125,13 @@ namespace NsEditerImage
         {
             try
             {
+                _Bmp = (Bitmap)_Image;
 
                 if (_Optimiser && (_Verrouiller == false))
                 {
                     // Lock bitmap and return bitmap data
                     _BmpData = _Bmp.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite,
-                                                 _Bmp.PixelFormat);
+                                                 _Image.PixelFormat);
 
                     _Verrouiller = true;
                 }
@@ -154,6 +155,7 @@ namespace NsEditerImage
                     _Bmp.UnlockBits(_BmpData);
                     _Verrouiller = false;
                 }
+
             }
             catch (Exception ex)
             {
@@ -234,40 +236,40 @@ namespace NsEditerImage
 
         public void Redimensionner(Size Dim)
         {
-            Liberer();
-
-            int sourceWidth = _Source.Width;
-            int sourceHeight = _Source.Height;
-
             float nPercent = 0;
             float nPercentW = 0;
             float nPercentH = 0;
 
-            nPercentW = ((float)Dim.Width / (float)sourceWidth);
-            nPercentH = ((float)Dim.Height / (float)sourceHeight);
+            nPercentW = ((float)Dim.Width / (float)Width);
+            nPercentH = ((float)Dim.Height / (float)Height);
 
             if (nPercentH < nPercentW)
                 nPercent = nPercentH;
             else
                 nPercent = nPercentW;
 
-            int destWidth = (int)(sourceWidth * nPercent);
-            int destHeight = (int)(sourceHeight * nPercent);
+            int destWidth = (int)(Width * nPercent);
+            int destHeight = (int)(Height * nPercent);
 
-            Bitmap b = new Bitmap(destWidth, destHeight);
-            Graphics g = Graphics.FromImage((Image)b);
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            Bitmap pBmp = new Bitmap(destWidth, destHeight);
+            Graphics pGraphic = Graphics.FromImage((Image)pBmp);
+            pGraphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            g.DrawImage(_Source, 0, 0, destWidth, destHeight);
-            g.Dispose();
+            pGraphic.DrawImage(_Source, 0, 0, destWidth, destHeight);
+            pGraphic.Dispose();
 
-            Init(b as Image);
+            _Source = (Image)pBmp;
+            _Image = (Image)_Source.Clone();
+
+            ReinitialiserHistogrammes();
+
+            Init();
         }
 
-        public Bitmap Histogramme(Size Dim, Canal_e Canal)
+        public int[] Histogramme(Canal_e Canal)
         {
 
-            int[] pHistogramme = new int[byte.MaxValue + 1];
+            int[] pHistogramme = new int[_PlageCouleur + 1];
 
             if (Canal.HasFlag(Canal_e.Rouge))
             {
@@ -291,6 +293,14 @@ namespace NsEditerImage
                     _HistBleu = HistogrammeDuCanal(Canal_e.Bleu);
 
                 Add(ref pHistogramme, _HistBleu);
+            }
+
+            if (Canal.HasFlag(Canal_e.Alpha))
+            {
+                if (_HistAlpha == null)
+                    _HistAlpha = HistogrammeDuCanal(Canal_e.Alpha);
+
+                Add(ref pHistogramme, _HistAlpha);
             }
 
             if (Canal.HasFlag(Canal_e.Teinte))
@@ -317,38 +327,38 @@ namespace NsEditerImage
                 Add(ref pHistogramme, _HistLuminosite);
             }
 
-            int pMax = 1;
-            for (int i = 0; i < pHistogramme.Length; i++)
-            {
-                if (pHistogramme[i] > pMax)
-                    pMax = pHistogramme[i];
-            }
+            return pHistogramme;
+        }
 
-            int pBoxWidth = Dim.Width;
-            int pBoxHeight = Dim.Height;
-            float byteMaxValue = byte.MaxValue;
+        public void NoirEtBlanc(float R = 0.2126f, float V = 0.7152f, float B = 0.0722f)
+        {
+            // Create a Graphics
+            Graphics pGraphic = Graphics.FromImage(_Image);
+            // Create a ColorMatrix
+            ColorMatrix MatriceCouleur = new ColorMatrix(
+                new float[][]
+                {
+                    new float[] {R, R, R, 0, 0},
+                    new float[] {V, V, V, 0, 0},
+                    new float[] {B, B, B, 0, 0},
+                    new float[] {0, 0, 0, 1, 0},
+                    new float[] {0, 0, 0, 0, 1}
+                }
+            );
 
-            Point[] Points = new Point[pHistogramme.Length + 1];
-            Points[0].X = 0;
-            Points[0].Y = pBoxHeight;
+            // Create ImageAttributes
+            ImageAttributes Attributs = new ImageAttributes();
+            // Set color matrix
+            Attributs.SetColorMatrix(MatriceCouleur,
+            ColorMatrixFlag.Default,
+            ColorAdjustType.Default);
+            // Draw Image with image attributes
+            pGraphic.DrawImage(_Source, new Rectangle(0, 0, _Image.Width, _Image.Height), 0, 0, _Image.Width, _Image.Height, GraphicsUnit.Pixel, Attributs);
+            // Dispose
+            pGraphic.Dispose();
 
-            for (int i = 0; i < pHistogramme.Length; i++)
-            {
-                Points[i + 1].X = Convert.ToInt32((i * (pBoxWidth - 2) / (byteMaxValue + 1)) + 1);
-                Points[i + 1].Y = Convert.ToInt32((pBoxHeight - 1) - ((Convert.ToDouble(pHistogramme[i]) * (pBoxHeight - 5)) / pMax));
-            }
+            Init();
 
-            Points[pHistogramme.Length].X = pBoxWidth - 1;
-            Points[pHistogramme.Length].Y = pBoxHeight;
-
-
-            Bitmap Image_Histogram = new Bitmap(pBoxWidth, pBoxHeight);
-            Graphics Graphic_Histogram = Graphics.FromImage(Image_Histogram);
-            Pen Pen = new Pen(Color.Black);
-            Pen.Brush = new SolidBrush(Color.Black);
-            Graphic_Histogram.FillPolygon(Pen.Brush, Points);
-
-            return Image_Histogram;
         }
 
         public List<Poincon> ListePoincons(List<Plage> ListePlages, Double Jeu, Size DimFinale, TypeReseau_e TypeReseau)
@@ -364,7 +374,7 @@ namespace NsEditerImage
 
             DiamMax += Jeu;
 
-            Double MmParPx = (Double)DimFinale.Width / (Double)_Bmp.Size.Width;
+            Double MmParPx = (Double)DimFinale.Width / (Double)_Image.Size.Width;
             Double PxParMm = 1.0 / MmParPx;
 
             List<MathPoint> pListePointsReseau = Reseau.ListePointsReseau(DimFinale, DiamMax, TypeReseau);
@@ -381,7 +391,7 @@ namespace NsEditerImage
                     MathPoint PtTmp = Pt;
                     PtTmp.Deplacer(V);
                     Color C = GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
-                    Val += C.GetBrightness();
+                    Val += C.GetBrightness() * _PlageCouleur;
                 }
 
                 Val /= pListePointsMatrice.Count;
@@ -394,11 +404,10 @@ namespace NsEditerImage
                     if ((Val > Pc.Min) && (Val <= Pc.Max))
                     {
                         pPc.Diametre = Pc.Intitule;
+                        pListePoincons.Add(pPc);
                         break;
                     }
                 }
-
-                pListePoincons.Add(pPc);
             }
 
             Liberer();
@@ -416,16 +425,16 @@ namespace NsEditerImage
 
         private int[] HistogrammeDuCanal(Canal_e Canal)
         {
-            Verrouiller();
 
             int[] pixels_map = new int[Width * Height];
-            Double byteMaxValue = byte.MaxValue;
 
-            for (int i = 0; i < Height; i++)
+            Verrouiller();
+
+            for (int y = 0; y < Height; y++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int x = 0; x < Width; x++)
                 {
-                    Color P = GetPixel(j, i);
+                    Color P = GetPixel(x, y);
 
                     Double Val = 0;
 
@@ -440,25 +449,30 @@ namespace NsEditerImage
                         case Canal_e.Bleu:
                             Val = P.B;
                             break;
+                        case Canal_e.Alpha:
+                            Val = P.A;
+                            break;
                         case Canal_e.Teinte:
-                            Val = (P.GetHue() * byteMaxValue) / 360;
+                            Val = (P.GetHue() * _PlageCouleur) / 360;
                             break;
                         case Canal_e.Saturation:
-                            Val = P.GetSaturation() * byteMaxValue;
+                            Val = P.GetSaturation() * _PlageCouleur;
                             break;
                         case Canal_e.Luminosite:
-                            Val = P.GetBrightness() * byteMaxValue;
+                            Val = P.GetBrightness() * _PlageCouleur;
                             break;
                         default:
                             Val = 0;
                             break;
                     }
-                    pixels_map[j + Width * i] = Convert.ToInt32(Math.Round(byteMaxValue - Val, 0));
+                    pixels_map[x + Width * y] = Convert.ToInt32(Val);
                 }
             }
 
+            Liberer();
+
             int pLg = pixels_map.Length;
-            int[] pHistogram = new int[Byte.MaxValue + 1];
+            int[] pHistogram = new int[_PlageCouleur + 1];
 
             for (int i = 0; i < pLg; i++)
             {
@@ -466,9 +480,24 @@ namespace NsEditerImage
                 pHistogram[pPixel]++;
             }
 
-            Liberer();
-
             return pHistogram;
+        }
+
+        private void ReinitialiserHistogrammes()
+        {
+            _HistRouge = null;
+            _HistVert = null;
+            _HistBleu = null;
+            _HistAlpha = null;
+            _HistTeinte = null;
+            _HistSaturation = null;
+            _HistLuminosite = null;
+        }
+
+        public void ReinitialiserImage()
+        {
+            _Image = (Image)_Source.Clone();
+            Init();
         }
 
     }
