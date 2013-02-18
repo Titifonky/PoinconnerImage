@@ -189,6 +189,18 @@ namespace NsPlages
             return pListePoincons;
         }
 
+        public List<int> ListeValeurs()
+        {
+            List<int> pListeValeurs = new List<int>();
+
+            foreach (Separateur pSep in _ListeSeps)
+            {
+                pListeValeurs.Add(Convert.ToInt32(pSep.Valeur));
+            }
+
+            return pListeValeurs;
+        }
+
     }
 
     public class Separateur

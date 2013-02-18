@@ -18,6 +18,7 @@ namespace PoinconnerImage
         private Image _ImagePoincons;
         private Boolean _NoirEtBlanc = false;
         private Size _DimensionsTole;
+        private Boolean _MettreAJourValeurs = false;
 
         public Formulaire()
         {
@@ -136,8 +137,28 @@ namespace PoinconnerImage
             }
 
             if (_SepLuminosite != null)
+            {
                 _SepLuminosite.Intitules(pListePoincons);
+                _MettreAJourValeurs = true;
+                MettreAJourValeurs();
+                _MettreAJourValeurs = false;
+            }
 
+        }
+
+        private void BoxLuminosite_MouseDown(object sender, MouseEventArgs e)
+        {
+            _MettreAJourValeurs = true;
+        }
+
+        private void BoxLuminosite_MouseMove(object sender, MouseEventArgs e)
+        {
+            MettreAJourValeurs();
+        }
+
+        private void BoxLuminosite_MouseUp(object sender, MouseEventArgs e)
+        {
+            _MettreAJourValeurs = false;
         }
 
         private void VisualiserPoincons_Click(object sender, EventArgs e)
@@ -485,6 +506,12 @@ namespace PoinconnerImage
 
             Somme.Text = Convert.ToString(R + V + B);
 
+        }
+
+        private void MettreAJourValeurs()
+        {
+            if (_MettreAJourValeurs && (_SepLuminosite != null))
+                Valeurs.Text = String.Join<int>(" ", _SepLuminosite.ListeValeurs());
         }
 
         private void LienWikipedia_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

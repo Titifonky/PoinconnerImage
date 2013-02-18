@@ -84,6 +84,8 @@
             this.RestaurerCouleur = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
             this.NbPoincons = new System.Windows.Forms.Label();
+            this.Valeurs = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VignettePoincons)).BeginInit();
             this.ControleVignette.SuspendLayout();
@@ -108,7 +110,7 @@
             this.CheminImage.Location = new System.Drawing.Point(12, 27);
             this.CheminImage.Margin = new System.Windows.Forms.Padding(4);
             this.CheminImage.Name = "CheminImage";
-            this.CheminImage.Size = new System.Drawing.Size(537, 22);
+            this.CheminImage.Size = new System.Drawing.Size(810, 22);
             this.CheminImage.TabIndex = 2;
             this.CheminImage.TextChanged += new System.EventHandler(this.CheminImage_TextChanged);
             // 
@@ -130,7 +132,7 @@
             this.CheminDossier.Location = new System.Drawing.Point(12, 298);
             this.CheminDossier.Margin = new System.Windows.Forms.Padding(4);
             this.CheminDossier.Name = "CheminDossier";
-            this.CheminDossier.Size = new System.Drawing.Size(537, 22);
+            this.CheminDossier.Size = new System.Drawing.Size(810, 22);
             this.CheminDossier.TabIndex = 5;
             this.CheminDossier.TextChanged += new System.EventHandler(this.CheminDossier_TextChanged);
             // 
@@ -355,6 +357,8 @@
             // 
             // Poincons
             // 
+            this.Poincons.Controls.Add(this.label19);
+            this.Poincons.Controls.Add(this.Valeurs);
             this.Poincons.Controls.Add(this.button1);
             this.Poincons.Controls.Add(this.label15);
             this.Poincons.Controls.Add(this.label11);
@@ -397,7 +401,7 @@
             this.label15.Location = new System.Drawing.Point(8, 4);
             this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(809, 243);
+            this.label15.Size = new System.Drawing.Size(809, 224);
             this.label15.TabIndex = 45;
             this.label15.Text = resources.GetString("label15.Text");
             // 
@@ -423,6 +427,9 @@
             this.BoxLuminosite.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.BoxLuminosite.TabIndex = 41;
             this.BoxLuminosite.TabStop = false;
+            this.BoxLuminosite.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BoxLuminosite_MouseDown);
+            this.BoxLuminosite.MouseMove += new System.Windows.Forms.MouseEventHandler(this.BoxLuminosite_MouseMove);
+            this.BoxLuminosite.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BoxLuminosite_MouseUp);
             // 
             // Blanc
             // 
@@ -721,6 +728,23 @@
             this.NbPoincons.Text = "0";
             this.NbPoincons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // Valeurs
+            // 
+            this.Valeurs.Location = new System.Drawing.Point(125, 711);
+            this.Valeurs.Name = "Valeurs";
+            this.Valeurs.ReadOnly = true;
+            this.Valeurs.Size = new System.Drawing.Size(392, 22);
+            this.Valeurs.TabIndex = 57;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(10, 714);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(110, 16);
+            this.label19.TabIndex = 58;
+            this.label19.Text = "Valeurs limite :";
+            // 
             // Formulaire
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -818,6 +842,8 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.LinkLabel LienWikipedia;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox Valeurs;
     }
 }
 
