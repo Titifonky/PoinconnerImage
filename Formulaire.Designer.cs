@@ -54,16 +54,6 @@
             this.label10 = new System.Windows.Forms.Label();
             this.Poincons = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
-            this.label17 = new System.Windows.Forms.Label();
-            this.Somme = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.Bleu = new System.Windows.Forms.TextBox();
-            this.Vert = new System.Windows.Forms.TextBox();
-            this.Rouge = new System.Windows.Forms.TextBox();
-            this.RestaurerCouleur = new System.Windows.Forms.Button();
-            this.ConvertirNoirEtBlanc = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.BoxLuminosite = new System.Windows.Forms.PictureBox();
@@ -78,6 +68,22 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.Jeu = new System.Windows.Forms.TextBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.LienWikipedia = new System.Windows.Forms.LinkLabel();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.Bleu = new System.Windows.Forms.TextBox();
+            this.Rouge = new System.Windows.Forms.TextBox();
+            this.Vert = new System.Windows.Forms.TextBox();
+            this.Somme = new System.Windows.Forms.Label();
+            this.ConvertirNoirEtBlanc = new System.Windows.Forms.Button();
+            this.RestaurerCouleur = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.NbPoincons = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.VignetteImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VignettePoincons)).BeginInit();
             this.ControleVignette.SuspendLayout();
@@ -87,6 +93,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.BoxLuminosite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Blanc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Noir)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // OuvrirFichierImage
@@ -168,7 +176,7 @@
             this.Lancer.Name = "Lancer";
             this.Lancer.Size = new System.Drawing.Size(349, 53);
             this.Lancer.TabIndex = 13;
-            this.Lancer.Text = "Convertir en DXF";
+            this.Lancer.Text = "6. Convertir en DXF";
             this.Lancer.UseVisualStyleBackColor = true;
             this.Lancer.Click += new System.EventHandler(this.Lancer_Click);
             // 
@@ -236,6 +244,7 @@
             // 
             this.Onglets.Controls.Add(this.Fichier);
             this.Onglets.Controls.Add(this.Poincons);
+            this.Onglets.Controls.Add(this.tabPage1);
             this.Onglets.Location = new System.Drawing.Point(673, 15);
             this.Onglets.Margin = new System.Windows.Forms.Padding(4);
             this.Onglets.Name = "Onglets";
@@ -347,16 +356,6 @@
             // Poincons
             // 
             this.Poincons.Controls.Add(this.button1);
-            this.Poincons.Controls.Add(this.label17);
-            this.Poincons.Controls.Add(this.Somme);
-            this.Poincons.Controls.Add(this.label14);
-            this.Poincons.Controls.Add(this.label13);
-            this.Poincons.Controls.Add(this.label12);
-            this.Poincons.Controls.Add(this.Bleu);
-            this.Poincons.Controls.Add(this.Vert);
-            this.Poincons.Controls.Add(this.Rouge);
-            this.Poincons.Controls.Add(this.RestaurerCouleur);
-            this.Poincons.Controls.Add(this.ConvertirNoirEtBlanc);
             this.Poincons.Controls.Add(this.label15);
             this.Poincons.Controls.Add(this.label11);
             this.Poincons.Controls.Add(this.BoxLuminosite);
@@ -383,107 +382,13 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(423, 734);
+            this.button1.Location = new System.Drawing.Point(424, 794);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(193, 32);
             this.button1.TabIndex = 56;
             this.button1.Text = "Masquer les poinçons";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.MasquerPoincons_Click);
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(550, 791);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(68, 16);
-            this.label17.TabIndex = 55;
-            this.label17.Text = "Somme :";
-            // 
-            // Somme
-            // 
-            this.Somme.AutoSize = true;
-            this.Somme.Location = new System.Drawing.Point(616, 791);
-            this.Somme.Name = "Somme";
-            this.Somme.Size = new System.Drawing.Size(0, 16);
-            this.Somme.TabIndex = 54;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(440, 791);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(18, 16);
-            this.label14.TabIndex = 53;
-            this.label14.Text = "B";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(331, 791);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(18, 16);
-            this.label13.TabIndex = 52;
-            this.label13.Text = "V";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(226, 791);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(19, 16);
-            this.label12.TabIndex = 51;
-            this.label12.Text = "R";
-            // 
-            // Bleu
-            // 
-            this.Bleu.Location = new System.Drawing.Point(464, 788);
-            this.Bleu.Name = "Bleu";
-            this.Bleu.Size = new System.Drawing.Size(68, 22);
-            this.Bleu.TabIndex = 50;
-            this.Bleu.TextChanged += new System.EventHandler(this.Bleu_TextChanged);
-            // 
-            // Vert
-            // 
-            this.Vert.Location = new System.Drawing.Point(355, 788);
-            this.Vert.Name = "Vert";
-            this.Vert.Size = new System.Drawing.Size(68, 22);
-            this.Vert.TabIndex = 49;
-            this.Vert.TextChanged += new System.EventHandler(this.Vert_TextChanged);
-            // 
-            // Rouge
-            // 
-            this.Rouge.Location = new System.Drawing.Point(251, 788);
-            this.Rouge.Name = "Rouge";
-            this.Rouge.Size = new System.Drawing.Size(68, 22);
-            this.Rouge.TabIndex = 48;
-            this.Rouge.TextChanged += new System.EventHandler(this.Rouge_TextChanged);
-            // 
-            // RestaurerCouleur
-            // 
-            this.RestaurerCouleur.AutoSize = true;
-            this.RestaurerCouleur.Location = new System.Drawing.Point(15, 831);
-            this.RestaurerCouleur.Margin = new System.Windows.Forms.Padding(4);
-            this.RestaurerCouleur.Name = "RestaurerCouleur";
-            this.RestaurerCouleur.Size = new System.Drawing.Size(174, 32);
-            this.RestaurerCouleur.TabIndex = 47;
-            this.RestaurerCouleur.Text = "Restaurer les couleurs";
-            this.RestaurerCouleur.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.RestaurerCouleur.UseVisualStyleBackColor = true;
-            this.RestaurerCouleur.Click += new System.EventHandler(this.RestaurerCouleur_Click);
-            // 
-            // ConvertirNoirEtBlanc
-            // 
-            this.ConvertirNoirEtBlanc.AutoSize = true;
-            this.ConvertirNoirEtBlanc.Location = new System.Drawing.Point(15, 783);
-            this.ConvertirNoirEtBlanc.Margin = new System.Windows.Forms.Padding(4);
-            this.ConvertirNoirEtBlanc.Name = "ConvertirNoirEtBlanc";
-            this.ConvertirNoirEtBlanc.Size = new System.Drawing.Size(190, 32);
-            this.ConvertirNoirEtBlanc.TabIndex = 46;
-            this.ConvertirNoirEtBlanc.Text = "Convertir en noir et blanc";
-            this.ConvertirNoirEtBlanc.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ConvertirNoirEtBlanc.UseVisualStyleBackColor = true;
-            this.ConvertirNoirEtBlanc.Click += new System.EventHandler(this.NoirEtBlanc_Click);
             // 
             // label15
             // 
@@ -511,7 +416,7 @@
             // BoxLuminosite
             // 
             this.BoxLuminosite.BackColor = System.Drawing.Color.White;
-            this.BoxLuminosite.Location = new System.Drawing.Point(12, 464);
+            this.BoxLuminosite.Location = new System.Drawing.Point(12, 500);
             this.BoxLuminosite.Margin = new System.Windows.Forms.Padding(4);
             this.BoxLuminosite.Name = "BoxLuminosite";
             this.BoxLuminosite.Size = new System.Drawing.Size(813, 204);
@@ -523,7 +428,7 @@
             // 
             this.Blanc.BackColor = System.Drawing.Color.White;
             this.Blanc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Blanc.Location = new System.Drawing.Point(12, 676);
+            this.Blanc.Location = new System.Drawing.Point(11, 470);
             this.Blanc.Margin = new System.Windows.Forms.Padding(4);
             this.Blanc.Name = "Blanc";
             this.Blanc.Size = new System.Drawing.Size(23, 22);
@@ -534,7 +439,7 @@
             // 
             this.Noir.BackColor = System.Drawing.Color.Black;
             this.Noir.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Noir.Location = new System.Drawing.Point(802, 676);
+            this.Noir.Location = new System.Drawing.Point(801, 470);
             this.Noir.Margin = new System.Windows.Forms.Padding(4);
             this.Noir.Name = "Noir";
             this.Noir.Size = new System.Drawing.Size(23, 22);
@@ -573,6 +478,7 @@
             this.ListePoincons.Size = new System.Drawing.Size(637, 22);
             this.ListePoincons.TabIndex = 12;
             this.ListePoincons.TextChanged += new System.EventHandler(this.ListePoincons_TextChanged);
+            this.ListePoincons.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListePoincons_KeyDown);
             // 
             // label5
             // 
@@ -603,7 +509,7 @@
             // VisualiserPoincons
             // 
             this.VisualiserPoincons.AutoSize = true;
-            this.VisualiserPoincons.Location = new System.Drawing.Point(12, 734);
+            this.VisualiserPoincons.Location = new System.Drawing.Point(13, 794);
             this.VisualiserPoincons.Margin = new System.Windows.Forms.Padding(4);
             this.VisualiserPoincons.Name = "VisualiserPoincons";
             this.VisualiserPoincons.Size = new System.Drawing.Size(391, 32);
@@ -646,11 +552,182 @@
             this.Jeu.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.Jeu.TextChanged += new System.EventHandler(this.Jeu_TextChanged);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox1);
+            this.tabPage1.Controls.Add(this.ConvertirNoirEtBlanc);
+            this.tabPage1.Controls.Add(this.RestaurerCouleur);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(830, 871);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Noir et blanc";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.LienWikipedia);
+            this.groupBox1.Controls.Add(this.label20);
+            this.groupBox1.Controls.Add(this.label12);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Controls.Add(this.label17);
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.Bleu);
+            this.groupBox1.Controls.Add(this.Rouge);
+            this.groupBox1.Controls.Add(this.Vert);
+            this.groupBox1.Controls.Add(this.Somme);
+            this.groupBox1.Location = new System.Drawing.Point(4, 69);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(664, 214);
+            this.groupBox1.TabIndex = 56;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Facteur de conversion";
+            // 
+            // LienWikipedia
+            // 
+            this.LienWikipedia.AutoSize = true;
+            this.LienWikipedia.Location = new System.Drawing.Point(271, 102);
+            this.LienWikipedia.Name = "LienWikipedia";
+            this.LienWikipedia.Size = new System.Drawing.Size(230, 16);
+            this.LienWikipedia.TabIndex = 57;
+            this.LienWikipedia.TabStop = true;
+            this.LienWikipedia.Text = "http://en.wikipedia.org/wiki/Grayscale";
+            this.LienWikipedia.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LienWikipedia_LinkClicked);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(7, 22);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(438, 96);
+            this.label20.TabIndex = 56;
+            this.label20.Text = resources.GetString("label20.Text");
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(7, 160);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(49, 16);
+            this.label12.TabIndex = 51;
+            this.label12.Text = "Rouge";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(147, 160);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(32, 16);
+            this.label13.TabIndex = 52;
+            this.label13.Text = "Vert";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(432, 160);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(61, 16);
+            this.label17.TabIndex = 55;
+            this.label17.Text = "Somme :";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(279, 160);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(35, 16);
+            this.label14.TabIndex = 53;
+            this.label14.Text = "Bleu";
+            // 
+            // Bleu
+            // 
+            this.Bleu.Location = new System.Drawing.Point(320, 157);
+            this.Bleu.Name = "Bleu";
+            this.Bleu.Size = new System.Drawing.Size(68, 22);
+            this.Bleu.TabIndex = 50;
+            this.Bleu.TextChanged += new System.EventHandler(this.Bleu_TextChanged);
+            // 
+            // Rouge
+            // 
+            this.Rouge.Location = new System.Drawing.Point(62, 157);
+            this.Rouge.Name = "Rouge";
+            this.Rouge.Size = new System.Drawing.Size(68, 22);
+            this.Rouge.TabIndex = 48;
+            this.Rouge.TextChanged += new System.EventHandler(this.Rouge_TextChanged);
+            // 
+            // Vert
+            // 
+            this.Vert.Location = new System.Drawing.Point(185, 157);
+            this.Vert.Name = "Vert";
+            this.Vert.Size = new System.Drawing.Size(68, 22);
+            this.Vert.TabIndex = 49;
+            this.Vert.TextChanged += new System.EventHandler(this.Vert_TextChanged);
+            // 
+            // Somme
+            // 
+            this.Somme.AutoSize = true;
+            this.Somme.Location = new System.Drawing.Point(498, 160);
+            this.Somme.Name = "Somme";
+            this.Somme.Size = new System.Drawing.Size(15, 16);
+            this.Somme.TabIndex = 54;
+            this.Somme.Text = "1";
+            // 
+            // ConvertirNoirEtBlanc
+            // 
+            this.ConvertirNoirEtBlanc.AutoSize = true;
+            this.ConvertirNoirEtBlanc.Location = new System.Drawing.Point(4, 23);
+            this.ConvertirNoirEtBlanc.Margin = new System.Windows.Forms.Padding(4);
+            this.ConvertirNoirEtBlanc.Name = "ConvertirNoirEtBlanc";
+            this.ConvertirNoirEtBlanc.Size = new System.Drawing.Size(120, 26);
+            this.ConvertirNoirEtBlanc.TabIndex = 46;
+            this.ConvertirNoirEtBlanc.Text = "Convertir en N&&B";
+            this.ConvertirNoirEtBlanc.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ConvertirNoirEtBlanc.UseVisualStyleBackColor = true;
+            this.ConvertirNoirEtBlanc.Click += new System.EventHandler(this.NoirEtBlanc_Click);
+            // 
+            // RestaurerCouleur
+            // 
+            this.RestaurerCouleur.AutoSize = true;
+            this.RestaurerCouleur.Location = new System.Drawing.Point(166, 23);
+            this.RestaurerCouleur.Margin = new System.Windows.Forms.Padding(4);
+            this.RestaurerCouleur.Name = "RestaurerCouleur";
+            this.RestaurerCouleur.Size = new System.Drawing.Size(152, 26);
+            this.RestaurerCouleur.TabIndex = 47;
+            this.RestaurerCouleur.Text = "Restaurer les couleurs";
+            this.RestaurerCouleur.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.RestaurerCouleur.UseVisualStyleBackColor = true;
+            this.RestaurerCouleur.Click += new System.EventHandler(this.RestaurerCouleur_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(380, 806);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(136, 20);
+            this.label18.TabIndex = 41;
+            this.label18.Text = "Nb de perçage :";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // NbPoincons
+            // 
+            this.NbPoincons.AutoSize = true;
+            this.NbPoincons.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NbPoincons.Location = new System.Drawing.Point(522, 806);
+            this.NbPoincons.Name = "NbPoincons";
+            this.NbPoincons.Size = new System.Drawing.Size(19, 20);
+            this.NbPoincons.TabIndex = 42;
+            this.NbPoincons.Text = "0";
+            this.NbPoincons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Formulaire
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1519, 928);
+            this.ClientSize = new System.Drawing.Size(1524, 928);
+            this.Controls.Add(this.NbPoincons);
+            this.Controls.Add(this.label18);
             this.Controls.Add(this.VignetteImage);
             this.Controls.Add(this.VignettePoincons);
             this.Controls.Add(this.Lancer);
@@ -675,7 +752,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.BoxLuminosite)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Blanc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Noir)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -730,6 +812,12 @@
         private System.Windows.Forms.Label Somme;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label NbPoincons;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.LinkLabel LienWikipedia;
     }
 }
 

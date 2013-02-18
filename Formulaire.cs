@@ -7,6 +7,7 @@ using DXFLibrary;
 using NsEditerImage;
 using NsPlages;
 using NsReseau;
+using System.Text.RegularExpressions;
 
 namespace PoinconnerImage
 {
@@ -16,6 +17,7 @@ namespace PoinconnerImage
         private EditerImage _Editeur;
         private Image _ImagePoincons;
         private Boolean _NoirEtBlanc = false;
+        private Size _DimensionsTole;
 
         public Formulaire()
         {
@@ -33,6 +35,11 @@ namespace PoinconnerImage
             Bleu.Text = "0.0722";
 
             Somme.Text = "1";
+
+            LargeurImage.Text = "0";
+            HauteurImage.Text = "0";
+
+            CheminDossier.Text = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             // Pour gerer la transparence de l'aperçu des poincons, on met VignettePoincons dans VignetteImage,
             // comme ca, les poincons sont au dessus.
@@ -56,14 +63,22 @@ namespace PoinconnerImage
             {
                 _Editeur = new EditerImage(CheminImage.Text);
 
-                if ((_Editeur.Image.Width > VignetteImage.Width) || (_Editeur.Image.Height > VignetteImage.Height))
-                    _Editeur.Redimensionner(VignetteImage.Size);
+                int pLg = _Editeur.Image.Width;
+                int pHt = _Editeur.Image.Height;
 
+                _Editeur.Redimensionner(VignetteImage.Size);
+
+                if ((_Editeur.Image.Width > pLg) || (_Editeur.Image.Height > pHt))
+                {
+                    pLg = _Editeur.Image.Width;
+                    pHt = _Editeur.Image.Height;
+                }
+
+                LargeurImage.Text = pLg.ToString();
+                HauteurImage.Text = pHt.ToString();
+                
                 VignetteImage.Image = _Editeur.Image;
                 VignettePoincons.Image = null;
-
-                HauteurImage.Text = "";
-                LargeurImage.Text = "";
 
                 if (_SepLuminosite == null)
                     _SepLuminosite = new Plages(BoxLuminosite, _Editeur.PlageCouleur);
@@ -72,6 +87,8 @@ namespace PoinconnerImage
 
                 MettreAJourHistogramme();
             }
+
+            NbPoincons.Text = "0";
 
             ValiderDXF();
         }
@@ -97,10 +114,16 @@ namespace PoinconnerImage
 
         private void ListePoincons_TextChanged(object sender, EventArgs e)
         {
-            if (!ContientQueDesChiffres(ListePoincons.Text))
-                ListePoincons.Text = "";
+
+            ListePoincons.Text = SupprimerLettres(ListePoincons.Text);
 
             ValiderDXF();
+        }
+
+        private void ListePoincons_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                ValiderPoincon.PerformClick();
         }
 
         private void ValiderPoincon_Click(object sender, EventArgs e)
@@ -147,6 +170,8 @@ namespace PoinconnerImage
 
             VignettePoincons.Image = _ImagePoincons;
 
+            NbPoincons.Text = pListePoincons.Count.ToString();
+
         }
 
         private void MasquerPoincons_Click(object sender, EventArgs e)
@@ -167,32 +192,14 @@ namespace PoinconnerImage
 
         private void LargeurImage_TextChanged(object sender, EventArgs e)
         {
-            if (LargeurImage.Focused)
-            {
-                Int32 Nb;
-                if (Int32.TryParse(LargeurImage.Text, out Nb) && (_Editeur != null))
-                {
-                    HauteurImage.Text = Convert.ToString((int)(Nb * _Editeur.Image.Height / _Editeur.Image.Width));
-                }
-                else
-                    LargeurImage.Text = "";
-            }
+            ValiderDimensionsTole();
 
             ValiderDXF();
         }
 
         private void HauteurImage_TextChanged(object sender, EventArgs e)
         {
-            if (HauteurImage.Focused)
-            {
-                Int32 Nb;
-                if (Int32.TryParse(HauteurImage.Text, out Nb) && (_Editeur != null))
-                {
-                    LargeurImage.Text = Convert.ToString((int)(Nb * _Editeur.Image.Width / _Editeur.Image.Height));
-                }
-                else
-                    HauteurImage.Text = "";
-            }
+            ValiderDimensionsTole();
 
             ValiderDXF();
         }
@@ -232,7 +239,8 @@ namespace PoinconnerImage
 
             Size DimTole = new Size(Convert.ToInt32(LargeurImage.Text), Convert.ToInt32(HauteurImage.Text));
 
-            pEditeur.Redimensionner(DimTole);
+            if ((pEditeur.Image.Width < DimTole.Width) || (pEditeur.Image.Height < DimTole.Height))
+                pEditeur.Redimensionner(DimTole);
 
             if (_NoirEtBlanc)
                 pEditeur.NoirEtBlanc();
@@ -249,7 +257,7 @@ namespace PoinconnerImage
 
             foreach (Poincon pPc in pListePoincons)
             {
-                Circle Cercle = new Circle(pPc.Point.X, pPc.Point.Y * -1, pPc.Diametre * 0.5, "0");
+                Circle Cercle = new Circle(pPc.Point.X, pPc.Point.Y * -1, pPc.Diametre * 0.5, ListePoincons.Text);
                 DocumentDXF.add(Cercle);
             }
 
@@ -356,7 +364,7 @@ namespace PoinconnerImage
             for (int i = 0; i < Histogramme.Length; i++)
             {
                 Points[i + 1].X = Convert.ToInt32((i * (pBoxWidth - 2) / Histogramme.Length) + 1);
-                Points[i + 1].Y = Convert.ToInt32((pBoxHeight - 1) - ((Convert.ToDouble(Histogramme[Histogramme.GetUpperBound(0) - i]) * (pBoxHeight - 5)) / pMax));
+                Points[i + 1].Y = Convert.ToInt32((pBoxHeight - 1) - ((Convert.ToDouble(Histogramme[Histogramme.GetUpperBound(0) - i]) * (pBoxHeight - 15)) / pMax));
             }
 
             Points[Histogramme.Length].X = pBoxWidth - 1;
@@ -400,18 +408,49 @@ namespace PoinconnerImage
             Lancer.Enabled = T;
         }
 
-        private bool ContientQueDesChiffres(string S)
+        private void ValiderDimensionsTole()
         {
-            bool Test = true;
-            foreach (char C in S)
+            if (LargeurImage.Focused && (_Editeur != null))
             {
-                if ((char.IsDigit(C) == false) && (C != '.') && (C != ',') && (C != ' '))
+                String pLg = Regex.Replace(LargeurImage.Text, "[^0-9]", "");
+
+                if (String.IsNullOrWhiteSpace(pLg))
+                    pLg = "0";
+                
+                HauteurImage.Text = Convert.ToString((int)(Convert.ToDouble(pLg) * _Editeur.Image.Height / _Editeur.Image.Width));
+                LargeurImage.Text = pLg;
+                _DimensionsTole.Width = Convert.ToInt32(pLg);
+                _DimensionsTole.Height = Convert.ToInt32(HauteurImage.Text);
+            }
+
+            if (HauteurImage.Focused && (_Editeur != null))
+            {
+                String pHt = Regex.Replace(HauteurImage.Text, "[^0-9]", "");
+
+                if (String.IsNullOrWhiteSpace(pHt))
+                    pHt = "0";
+
+                LargeurImage.Text = Convert.ToString((int)(Convert.ToDouble(pHt) * _Editeur.Image.Width / _Editeur.Image.Height));
+                HauteurImage.Text = pHt;
+                _DimensionsTole.Width = Convert.ToInt32(LargeurImage.Text);
+                _DimensionsTole.Height = Convert.ToInt32(pHt);
+            }
+
+        }
+
+        private String SupprimerLettres(String S)
+        {
+            for (int j = 0; j < S.Length; j++)
+            {
+                Char C = S[j];
+                if (!char.IsDigit(C) && (C != '.') && (C != ',') && (C != ' '))
                 {
-                    Test = false;
+                    S = S.Remove(j, 1);
+                    j--;
                 }
             }
 
-            return Test;
+            return S;
         }
 
         private TypeReseau_e TypeReseau()
@@ -446,6 +485,11 @@ namespace PoinconnerImage
 
             Somme.Text = Convert.ToString(R + V + B);
 
+        }
+
+        private void LienWikipedia_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(LienWikipedia.Text);
         }
 
     }

@@ -27,14 +27,25 @@ namespace NsPlages
     {
         private Pen _Pen = Pens.Red;
         private PictureBox _Box;
-        private int Tolerance = 2;
+        private int Tolerance = 3;
         private Double _Echelle = 1;
-        private int _LgHistogramme;
+        private int _LgHistogramme = 0;
+        private int _Plage = 0;
         private List<Separateur> _ListeSeps = new List<Separateur>();
         private List<Texte> _ListeTextes = new List<Texte>();
         private List<Plage> _ListePlages = new List<Plage>();
 
-        public int LgHistogramme { get { return _LgHistogramme; } set { _LgHistogramme = value; } }
+        public int LgHistogramme
+        {
+            get { return _LgHistogramme; }
+            set
+            {
+                _LgHistogramme = value;
+                _Plage = _Box.Width - (int)Math.Truncate((_Box.Width - _LgHistogramme) * 0.5);
+            }
+        }
+        public int Plage { get { return _Plage; } }
+        public Double Echelle { get { return _Echelle; } }
 
         public Plages(PictureBox Box, Double Echelle)
         {
@@ -118,7 +129,7 @@ namespace NsPlages
             if (X > _Box.Width || X < 0)
                 return null;
 
-            Separateur Sep = new Separateur(No, _Pen, X, _Box, _ListeSeps);
+            Separateur Sep = new Separateur(this, No, _Pen, X, _Box, _ListeSeps);
             if (Sep != null)
             {
                 Sep.Tolerance = Tolerance;
@@ -164,31 +175,14 @@ namespace NsPlages
         {
             List<Plage> pListePoincons = new List<Plage>();
 
-            // Plage de calcul des valeurs
-            int Plage = _Box.Width - (int)Math.Truncate((_Box.Width - _LgHistogramme) * 0.5);
-
-            foreach(Texte pTxt in _ListeTextes)
+            foreach (Texte pTxt in _ListeTextes)
             {
-
-                // Calcul des valeurs Min et Max en fonction des dimensions de la boite, de l'histogramme et de l'echelle
-                // On prend comme reference le bord droit. Il faut inverser les valeurs
-                Double pMax = (Plage - pTxt.Gauche.X) * _Echelle / _LgHistogramme;
-                Double pMin = (Plage - pTxt.Droite.X) * _Echelle / _LgHistogramme;
-
-                // Si le separateur Gauche se trouve dans la partie vide
-                if (pMax > _Echelle)
-                    pMax = _Echelle;
-
-                // Si le separateur de Droite se trouve dans la partie vide
-                if (pMin < 0)
-                    pMin = 0;
-
                 String pNom = pTxt.Nom;
 
                 if (String.IsNullOrWhiteSpace(pNom))
                     pNom = "0";
 
-                Plage pPc = new Plage(Convert.ToDouble(pNom), pMin, pMax);
+                Plage pPc = new Plage(Convert.ToDouble(pNom), pTxt.Droite.Valeur, pTxt.Gauche.Valeur);
                 pListePoincons.Add(pPc);
             }
 
@@ -218,7 +212,40 @@ namespace NsPlages
                 }
             }
         }
+        public double Valeur
+        {
+            get
+            {
+                // Calcul des valeurs Min et Max en fonction des dimensions de la boite, de l'histogramme et de l'echelle
+                // On prend comme reference le bord droit. Il faut inverser les valeurs
+                Double pVal = (_Parent.Plage - X) * _Parent.Echelle / _Parent.LgHistogramme;
 
+                if (pVal > _Parent.Echelle)
+                    pVal = _Parent.Echelle;
+                else if (pVal < 0)
+                    pVal = 0;
+
+                return pVal;
+
+            }
+            set
+            {
+                Double pVal = value;
+
+                if (pVal > _Parent.Echelle)
+                    pVal = _Parent.Echelle;
+                else if (pVal < 0)
+                    pVal = 0;
+
+                // On calul le X
+                X = Convert.ToInt32(_Parent.Plage - ((pVal * _Parent.LgHistogramme) / _Parent.Echelle));
+            }
+        }
+
+        private Plages _Parent;
+        private Font _Police = new Font("Arial", 10);
+        private SolidBrush _Brosse = new SolidBrush(Color.Black);
+        private StringFormat _Format = new StringFormat();
         private int _No;
         private Pen _Pen;
         private int _X;
@@ -236,10 +263,11 @@ namespace NsPlages
         private MouseEventHandler _EvMsMove;
         private MouseEventHandler _EvMsUp;
 
-        public Separateur(int No, Pen Pen, int X, PictureBox Box, List<Separateur> ListeSep)
+        public Separateur(Plages Parent, int No, Pen Pen, int X, PictureBox Box, List<Separateur> ListeSep)
         {
             if ((Pen != null) || (Box != null) || (ListeSep != null))
             {
+                _Parent = Parent;
                 _No = No;
                 _Pen = Pen;
                 _X = X;
@@ -247,6 +275,10 @@ namespace NsPlages
                 _ListeSep = ListeSep;
                 _Depart = new Point(X, 0);
                 _Fin = new Point(X, Box.Height);
+
+                _Format.Alignment = StringAlignment.Center;
+                _Format.LineAlignment = StringAlignment.Center;
+
                 _EvPaint = new PaintEventHandler(Box_Paint);
                 _EvMsDown = new MouseEventHandler(Box_MouseDown);
                 _EvMsMove = new MouseEventHandler(Box_MouseMove);
@@ -285,7 +317,8 @@ namespace NsPlages
 
         private void Box_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawLine(_Pen, _Depart, _Fin);
+            e.Graphics.FillRectangle(Brushes.Red, _Depart.X - 1, _Depart.Y + 15, 3, _Fin.Y);
+            e.Graphics.DrawString(Convert.ToInt32(Valeur).ToString() , _Police, _Brosse, X, 5, _Format);
         }
 
         private void Box_MouseDown(object sender, MouseEventArgs e)
@@ -310,7 +343,7 @@ namespace NsPlages
                     }
                 }
                 _min += 3;
-                _max -= 2;
+                _max -= 3;
             }
         }
 
@@ -333,6 +366,7 @@ namespace NsPlages
             _min = 0;
             _max = 10000;
         }
+        
     }
 
     public class Texte

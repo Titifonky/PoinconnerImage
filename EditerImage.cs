@@ -401,7 +401,7 @@ namespace NsEditerImage
 
                 foreach (Plage Pc in ListePlages)
                 {
-                    if ((Val > Pc.Min) && (Val <= Pc.Max))
+                    if ((Val >= Pc.Min) && (Val <= Pc.Max))
                     {
                         pPc.Diametre = Pc.Intitule;
                         pListePoincons.Add(pPc);
