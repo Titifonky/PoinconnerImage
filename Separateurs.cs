@@ -330,7 +330,7 @@ namespace NsPlages
         private void Box_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.FillRectangle(Brushes.Red, _Depart.X - 1, _Depart.Y + 15, 3, _Fin.Y);
-            e.Graphics.DrawString(Convert.ToInt32(Valeur).ToString() , _Police, _Brosse, X, 5, _Format);
+            e.Graphics.DrawString(Convert.ToInt32(Valeur).ToString(), _Police, _Brosse, X, 5, _Format);
         }
 
         private void Box_MouseDown(object sender, MouseEventArgs e)
@@ -378,7 +378,7 @@ namespace NsPlages
             _min = 0;
             _max = 10000;
         }
-        
+
     }
 
     public class Texte
@@ -388,7 +388,7 @@ namespace NsPlages
         public Separateur Gauche { get { return _Gauche; } }
         public Separateur Droite { get { return _Droite; } }
 
-        private Font _Police = new Font("Arial", 10);
+        private Font _Police = new Font("Arial", 12, FontStyle.Bold);
         private SolidBrush _Brosse = new SolidBrush(Color.Black);
         private StringFormat _Format = new StringFormat();
         private String _Nom;
@@ -431,7 +431,7 @@ namespace NsPlages
 
         private void Box_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawString(_Nom, _Police, _Brosse, ((_Gauche.X + _Droite.X) / 2), 20, _Format);
+            e.Graphics.DrawString(_Nom, _Police, _Brosse, ((_Gauche.X + _Droite.X) / 2), 25, _Format);
         }
     }
 }

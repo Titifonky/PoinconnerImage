@@ -390,7 +390,14 @@ namespace NsEditerImage
                 {
                     MathPoint PtTmp = Pt;
                     PtTmp.Deplacer(V);
-                    Color C = GetPixel((int)Math.Truncate(PtTmp.X * PxParMm), (int)Math.Truncate(PtTmp.Y * PxParMm));
+                    int x = (int)Math.Truncate(PtTmp.X * PxParMm);
+                    if (x >= Width)
+                        x = Width - 1;
+                    int y = (int)Math.Truncate(PtTmp.Y * PxParMm);
+                    if (y >= Height)
+                        y = Height - 1;
+
+                    Color C = GetPixel(x, y);
                     Val += C.GetBrightness() * _PlageCouleur;
                 }
 

@@ -273,12 +273,11 @@ namespace PoinconnerImage
             Tables Tables = new Tables();
             DocumentDXF.SetTables(Tables);
 
-            Table Calques = new Table("LAYER");
-            Tables.addTable(Calques);
+            String CalquePoincons = ListePoincons.Text + " - " + Valeurs.Text;
 
             foreach (Poincon pPc in pListePoincons)
             {
-                Circle Cercle = new Circle(pPc.Point.X, pPc.Point.Y * -1, pPc.Diametre * 0.5, ListePoincons.Text);
+                Circle Cercle = new Circle(pPc.Point.X, pPc.Point.Y * -1, pPc.Diametre * 0.5, CalquePoincons);
                 DocumentDXF.add(Cercle);
             }
 
