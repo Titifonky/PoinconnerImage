@@ -182,9 +182,11 @@ namespace PoinconnerImage
 
             foreach (Poincon pPc in pListePoincons)
             {
+                int pDiam = (int)Math.Truncate(pPc.Diametre * PxParMm);
+                pDiam = pDiam < 1.5 ? 2 : pDiam;
                 int pX = (int)Math.Truncate(pDecalX + pPc.Point.X * PxParMm - pPc.Diametre * 0.5 * PxParMm);
                 int pY = (int)Math.Truncate(pDecalY + pPc.Point.Y * PxParMm - pPc.Diametre * 0.5 * PxParMm);
-                pGraphic.FillEllipse(Brushes.Black, pX, pY, (int)Math.Truncate(pPc.Diametre * PxParMm), (int)Math.Truncate(pPc.Diametre * PxParMm));
+                pGraphic.FillEllipse(Brushes.Black, pX, pY, pDiam, pDiam);
             }
 
             pGraphic.Dispose();

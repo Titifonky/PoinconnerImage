@@ -58,52 +58,64 @@ namespace NsPlages
 
         public void Intitules(List<String> ListeIntitules)
         {
-            List<Texte> pListeTexte = _ListeTextes;
 
-            for (int i = 0; i < Math.Min(ListeIntitules.Count, pListeTexte.Count); i++)
+            /// Si _ListeTextes n'est pas vide, on garde la position des séparateurs
+            /// et on remplace simplement la valeur de la plage.
+            for (int i = 0; i < Math.Min(ListeIntitules.Count, _ListeTextes.Count); i++)
             {
-                pListeTexte[i].Nom = ListeIntitules[i];
+                _ListeTextes[i].Nom = ListeIntitules[i];
             }
 
-            if (ListeIntitules.Count > pListeTexte.Count)
+            /// Si il y a de nouveaux intitulés, on rajoute
+            /// un séparateur et un texte pour chacun
+            if (ListeIntitules.Count > _ListeTextes.Count)
             {
                 Separateur pSepG;
 
                 int pDiv;
 
-                if (pListeTexte.Count == 0)
+                /// S'il n'y a aucun séparateur, on met le premier
+                if (_ListeSeps.Count == 0)
                     pSepG = AjouterSeparateur(0, 5);
+                /// sinon on récupère le séparateur de droite du dernier texte
                 else
-                    pSepG = pListeTexte[pListeTexte.Count - 1].Droite;
+                    pSepG = _ListeTextes[_ListeTextes.Count - 1].Droite;
 
+                /// Si la distance entre le dernier séparateur et le bord de la boite est inférieur
+                /// à 10px, on le déplace pour laisser un peu de place aux autres
+                /// puis on calcul l'entraxe
                 if ((_Box.Width - pSepG.X) < 10)
                 {
-                    Separateur pSepTmp = pListeTexte[pListeTexte.Count - 1].Gauche;
-                    pDiv = (_Box.Width - 5 - pSepTmp.X) / (1 + ListeIntitules.Count - pListeTexte.Count);
+                    Separateur pSepTmp = _ListeTextes[_ListeTextes.Count - 1].Gauche;
+                    pDiv = (_Box.Width - 5 - pSepTmp.X) / (1 + ListeIntitules.Count - _ListeTextes.Count);
                     pSepG.X = pSepTmp.X + pDiv;
                 }
                 else
-                    pDiv = (_Box.Width - 5 - pSepG.X) / (ListeIntitules.Count - pListeTexte.Count);
+                    pDiv = (_Box.Width - 5 - pSepG.X) / (ListeIntitules.Count - _ListeTextes.Count);
 
-                for (int i = pListeTexte.Count; i < ListeIntitules.Count; i++)
+                /// Et on ajoute les derniers intitulés
+                for (int i = _ListeTextes.Count; i < ListeIntitules.Count; i++)
                 {
                     Separateur pSepD = AjouterSeparateur(pSepG.No + 1, pSepG.X + pDiv);
                     AjouterTexte(ListeIntitules[i], pSepG, pSepD);
                     pSepG = pSepD;
                 }
             }
-            else if (ListeIntitules.Count < pListeTexte.Count)
+            /// Sinon, on supprime ceux qui sont en trop
+            else if (ListeIntitules.Count < _ListeTextes.Count)
             {
                 if (ListeIntitules.Count == 0)
                     Supprimer();
                 else
-                    for (int i = (pListeTexte.Count - 1); i >= ListeIntitules.Count; i--)
+                    for (int i = (_ListeTextes.Count - 1); i >= ListeIntitules.Count; i--)
                     {
-                        Texte pTxt = pListeTexte[i];
+                        Texte pTxt = _ListeTextes[i];
                         SupprimerSeparateur(pTxt.Droite);
                         SupprimerTexte(pTxt);
                     }
             }
+
+            _Box.Refresh();
         }
 
         public void Supprimer()

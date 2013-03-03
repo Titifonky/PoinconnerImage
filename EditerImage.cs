@@ -365,6 +365,7 @@ namespace NsEditerImage
         {
             List<Poincon> pListePoincons = new List<Poincon>();
 
+            /// On cherche le diametre max
             Double DiamMax = 0;
             foreach (Plage P in ListePlages)
             {
@@ -372,11 +373,15 @@ namespace NsEditerImage
                     DiamMax = P.Intitule;
             }
 
+            /// On rajoute le jeu pour avoir l'entraxe du réseau
             DiamMax += Jeu;
 
+            /// On calcul les facteurs de conversion
             Double MmParPx = (Double)DimFinale.Width / (Double)_Image.Size.Width;
             Double PxParMm = 1.0 / MmParPx;
 
+            /// On récupère la liste des points du réseau
+            /// On récupère la liste des point de l'empreinte : carré ou héxagonale
             List<MathPoint> pListePointsReseau = Reseau.ListePointsReseau(DimFinale, DiamMax, TypeReseau);
             List<MathVecteur> pListePointsMatrice = Reseau.ListVecteursMatrice(DiamMax, MmParPx, TypeReseau);
 
